@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
 
 class LoginWeb extends StatefulWidget {
   const LoginWeb({Key? key}) : super(key: key);
@@ -98,8 +99,7 @@ class _LoginWebState extends State<LoginWeb> {
                           password: adminPassword,
                         );
                         // Navigeer naar de gewenste pagina na een succesvolle login
-                        Navigator.pushReplacementNamed(
-                            context, '/web_dashboard_page');
+                        Navigator.pushReplacementNamed(context, '/home_web');
                         debugPrint(
                             "Aanmelding succesvol, voer hier verdere acties uit indien nodig");
                       } catch (e) {
