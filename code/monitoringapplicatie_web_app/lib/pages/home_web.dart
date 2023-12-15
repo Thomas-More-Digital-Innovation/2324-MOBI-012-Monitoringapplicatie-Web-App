@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
 
 class Home_page extends StatefulWidget {

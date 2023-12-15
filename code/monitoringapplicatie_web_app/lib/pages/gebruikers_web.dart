@@ -3,8 +3,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
 
-class Gebruikers extends StatelessWidget {
-  const Gebruikers({Key? key});
+class Gebruikers extends StatefulWidget {
+  const Gebruikers({super.key});
+
+  @override
+  State<Gebruikers> createState() => _GebruikersState();
+}
+
+class _GebruikersState extends State<Gebruikers> {
+  Map<String, List<String>> userSensors = {};
+  String? selectedRole;
+  void initState() {
+    super.initState();
+    selectedRole = null; // or initialize it with a default value if needed
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +53,17 @@ class Gebruikers extends StatelessWidget {
                       List<Widget> patientWidgets = [];
 
                       for (var patient in patienten) {
-                        patientWidgets.add(
-                          ListTile(
-                            title: Text(patient['name']),
-                            subtitle: Text(patient['role']),
-                          ),
-                        );
+                        if (patient['role'] == 'Patiënt') {
+                          patientWidgets.add(
+                            ListTile(
+                              title: Text(patient['name'] +
+                                  ", Role: " +
+                                  patient['role']),
+                              subtitle:
+                                  Text('Sensors: ${userSensors[patient.id]}'),
+                            ),
+                          );
+                        }
                       }
 
                       return ListView(
@@ -66,14 +83,47 @@ class Gebruikers extends StatelessWidget {
   }
 
   Future<QuerySnapshot> getPatienten() async {
-    return await FirebaseFirestore.instance.collection('sd-dummy-users').get();
+    QuerySnapshot patientenSnapshot =
+        await FirebaseFirestore.instance.collection('sd-dummy-users').get();
+    for (QueryDocumentSnapshot patientSnapshot in patientenSnapshot.docs) {
+      String patientID = patientSnapshot.id;
+      print('Patient ID: $patientID');
+
+      QuerySnapshot sensorsSnapshot = await FirebaseFirestore.instance
+          .collection('sd-dummy-users/$patientID/sensors')
+          .get();
+
+      List<String> sensorIDs = [];
+
+      for (QueryDocumentSnapshot sensorSnapshot in sensorsSnapshot.docs) {
+        String sensorID = sensorSnapshot.id;
+        if (sensorSnapshot.exists) {
+          print('Sensor data gevonden voor Sensor ID: $sensorID');
+          sensorIDs.add(sensorID);
+
+          // Voeg hier verdere verwerking toe, indien nodig
+        } else {
+          print('Geen sensor data gevonden voor Sensor ID: $sensorID');
+        }
+      }
+
+      userSensors[patientID] = sensorIDs;
+    }
+
+    // Print de map buiten de loop om de volledige map te zien
+    print('Alle gebruikerssensoren: $userSensors');
+
+    return patientenSnapshot;
+  }
+
+  Future<QuerySnapshot> getRoles() async {
+    return await FirebaseFirestore.instance.collection('roles').get();
   }
 
   Future<void> _showAddUserDialog(BuildContext context) async {
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     TextEditingController nameController = TextEditingController();
-    TextEditingController roleController = TextEditingController();
 
     return showDialog(
       context: context,
@@ -96,10 +146,45 @@ class Gebruikers extends StatelessWidget {
                   controller: nameController,
                   decoration: InputDecoration(labelText: 'Name'),
                 ),
-                TextField(
-                  controller: roleController,
-                  decoration: InputDecoration(labelText: 'Role'),
-                ),
+                FutureBuilder(
+                    future: getRoles(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        List<DocumentSnapshot> roles = snapshot.data!.docs;
+
+                        // Hier maak je een lijst van DropdownMenuItem-widgets
+                        List<DropdownMenuItem<String>> dropdownItems = [];
+                        for (var role in roles) {
+                          dropdownItems.add(
+                            DropdownMenuItem(
+                              value: role['name'],
+                              child: Text(role['name']),
+                            ),
+                          );
+                        }
+
+                        // Het DropdownButton-widget met de geselecteerde waarde, de hint en de lijst van items
+                        return StatefulBuilder(
+                          builder: (context, setState) {
+                            return DropdownButton(
+                              isExpanded: true,
+                              hint: Text(selectedRole ?? 'Kies de role'),
+                              value: selectedRole,
+                              onChanged: (String? newSelectedRole) {
+                                setState(() {
+                                  selectedRole = newSelectedRole;
+                                });
+                              },
+                              items: dropdownItems,
+                            );
+                          },
+                        );
+                      }
+                    }),
               ],
             ),
           ),
@@ -127,7 +212,7 @@ class Gebruikers extends StatelessWidget {
                       .set({
                     'userId': userCredential.user?.uid,
                     'name': nameController.text,
-                    'role': roleController.text,
+                    'role': selectedRole,
                   });
 
                   // Navigate to a different screen after successful user creation
