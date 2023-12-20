@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:monitoringapplicatie_web_app/pages/dashboard.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
 
 class Gebruikers extends StatefulWidget {
@@ -54,18 +55,25 @@ class _GebruikersState extends State<Gebruikers> {
 
                       for (var patient in patienten) {
                         if (patient['role'] == 'Patiënt') {
-                          patientWidgets.add(
-                            ListTile(
+                          patientWidgets.add(InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => Dashboard(
+                                          patientID: patient.id,
+                                        )),
+                              );
+                            },
+                            child: ListTile(
                               title: Text(patient['name'] +
                                   ", Role: " +
                                   patient['role']),
                               subtitle:
                                   Text('Sensors: ${userSensors[patient.id]}'),
                             ),
-                          );
+                          ));
                         }
                       }
-
                       return ListView(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -98,7 +106,6 @@ class _GebruikersState extends State<Gebruikers> {
       for (QueryDocumentSnapshot sensorSnapshot in sensorsSnapshot.docs) {
         String sensorID = sensorSnapshot.id;
         if (sensorSnapshot.exists) {
-          print('Sensor data gevonden voor Sensor ID: $sensorID');
           sensorIDs.add(sensorID);
 
           // Voeg hier verdere verwerking toe, indien nodig
