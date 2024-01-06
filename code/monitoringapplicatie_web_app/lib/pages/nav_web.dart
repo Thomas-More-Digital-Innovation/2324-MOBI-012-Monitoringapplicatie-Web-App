@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:monitoringapplicatie_web_app/pages/gebruikers_web.dart';
 import 'package:monitoringapplicatie_web_app/pages/patienten_web.dart';
-import 'package:monitoringapplicatie_web_app/pages/web_dashboard_page.dart';
 import 'package:monitoringapplicatie_web_app/pages/home_web.dart';
 
 class Nav extends StatefulWidget {
@@ -13,6 +12,8 @@ class Nav extends StatefulWidget {
 }
 
 class _NavState extends State<Nav> {
+  User? user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
