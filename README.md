@@ -1,13 +1,13 @@
 # MOBI-12 (Geinstrumenteerde hulpmiddelen)
 
-**Probleemstelling**
+## Probleemstelling
 Voor de revalidatie van mensen met lichamelijke klachten (waaronder eg. motorische problemen) was er de noodzaak voor het revalidatieproces in kaart te kunnen brengen. Er waren al bestaande sensoren (Movella Dot Sense X), maar deze waren enkel te gebruiken via de aangeleverde applicatie welke vrij beperkt is en niet onder eigen beheer. Ten slotte kon deze applicatie niet online raadpleegbaar zijn. Hierdoor zijn er verschillende beperkingen, denk aan:
 
 - Geen offline support (patienten thuis)
 - Geen lange termijn analyse 
 - Geen backup (data lokaal, verloren = verloren)
 
-**Aanpak**
+## Aanpak
 Eerst en vooral is er een analyse gemaakt van de benodigdheden, hiervoor is er een use case diagram gemaakt alsook ruwe datamodellen zodat het duidelijk was hoe de structuur eruit zou zien. Het was hier niet erg evident om eerst met de front-end te beginnen omdat er bepaalde gegevens waren die we in de back-end moesten bijhouden die niet zichtbaar zijn op de front-end. 
 
 Ook is er een Figma prototype gemaakt welke met de klant overlegd is zodat we goed konden inschatten wat de wensen precies waren op inhoudelijk vlak.
