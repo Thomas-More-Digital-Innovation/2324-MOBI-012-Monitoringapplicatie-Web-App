@@ -17,7 +17,7 @@ void main() async {
     appId: "1:281097569077:web:e15118a28e149aa03cc27c",
   ));
   runApp(MaterialApp(
-    initialRoute: '/login_web',
+    initialRoute: '/web_dashboard_page',
     routes: {
       '/web_dashboard_page': (context) => WebPage(),
       '/login_web': (context) => const LoginWeb(),
