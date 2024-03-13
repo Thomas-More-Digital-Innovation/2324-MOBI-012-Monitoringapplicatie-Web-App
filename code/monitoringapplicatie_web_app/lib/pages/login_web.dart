@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
 
 class LoginWeb extends StatefulWidget {
@@ -13,6 +14,44 @@ class LoginWeb extends StatefulWidget {
 class _LoginWebState extends State<LoginWeb> {
   String adminEmail = "";
   String adminPassword = "";
+
+  Future<void> updateLastLoggedIn(String userId) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('sd-dummy-users')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        await querySnapshot.docs.first.reference.update({
+          'lastSignedIn': Timestamp.now(),
+        });
+      } else {
+        print('Document niet gevonden voor userId: $userId');
+      }
+    } catch (e) {
+      print("Fout bij bijwerken laatste keer aangemeld: $e");
+    }
+  }
+
+  Future<void> updateIsSignedIn(String userId, bool value) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('sd-dummy-users')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        await querySnapshot.docs.first.reference.update({
+          'isSignedIn': value,
+        });
+      } else {
+        print('Document niet gevonden voor userId: $userId');
+      }
+    } catch (e) {
+      print("Fout bij bijwerken isSignedIn: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +122,7 @@ class _LoginWebState extends State<LoginWeb> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 16),
                     //Password text field
                     Container(
