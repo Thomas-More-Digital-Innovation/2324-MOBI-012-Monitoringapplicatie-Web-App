@@ -39,14 +39,18 @@ class Patienten extends StatelessWidget {
                           ListTile(
                             title: Text(patient['name']),
                             subtitle: Text(patient['role']),
+                            tileColor: Colors.grey[200],
                           ),
                         );
                       }
 
                       return ListView(
+                        padding: const EdgeInsets.all(8),
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        children: patientWidgets,
+                        children: <Widget>[
+                          ...patientWidgets,
+                        ],
                       );
                     }
                   },
@@ -61,6 +65,9 @@ class Patienten extends StatelessWidget {
 
   Future<QuerySnapshot> getPatienten() async {
     // Hier moet je de juiste Firestore-collectie opgeven waar je patiëntengegevens hebt opgeslagen
-    return await FirebaseFirestore.instance.collection('sd-dummy-users').get();
+    return await FirebaseFirestore.instance
+        .collection('sd-dummy-users')
+        .where('role', isEqualTo: 'Patiënt')
+        .get();
   }
 }

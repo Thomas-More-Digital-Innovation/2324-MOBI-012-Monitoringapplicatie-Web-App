@@ -40,7 +40,7 @@ dependencies:
   cloud_firestore: ^4.15.5 #^4.13.2
   syncfusion_flutter_charts: ^23.2.6
   url_launcher: ^6.0.9
-  fl_chart: ^0.65.0
+  fl_chart: ^0.66.2
   
 dev_dependencies:
   flutter_test:

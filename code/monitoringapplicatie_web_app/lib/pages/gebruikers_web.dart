@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:monitoringapplicatie_web_app/pages/dashboard.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
+import 'package:monitoringapplicatie_web_app/pages/quat_page.dart';
 
 class Gebruikers extends StatefulWidget {
   const Gebruikers({super.key});
@@ -59,9 +60,8 @@ class _GebruikersState extends State<Gebruikers> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                    builder: (context) => Dashboard(
-                                          patientID: patient.id,
-                                        )),
+                                    builder: (context) =>
+                                        const QuatPage(title: 'QuatPage')),
                               );
                             },
                             child: ListTile(
@@ -220,6 +220,9 @@ class _GebruikersState extends State<Gebruikers> {
                     'userId': userCredential.user?.uid,
                     'name': nameController.text,
                     'role': selectedRole,
+                    'isSignedIn': false,
+                    'lastSignedIn': null,
+                    'lastDataSend': null,
                   });
 
                   // Navigate to a different screen after successful user creation
