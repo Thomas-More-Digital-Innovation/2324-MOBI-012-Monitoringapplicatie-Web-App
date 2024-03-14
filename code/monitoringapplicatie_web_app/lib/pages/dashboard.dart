@@ -58,8 +58,8 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     minX: 0,
                     maxX: (sessionsData.length - 1) / 5,
-                    minY: -70, // Aanpassen aan je gegevens
-                    maxY: 75, // Aanpassen aan je gegevens
+                    minY: -70, // Aanpassen aan je gegevens.
+                    maxY: 75, // Aanpassen aan je gegevens.
                     lineBarsData: [
                       LineChartBarData(
                         spots: sessionsData
