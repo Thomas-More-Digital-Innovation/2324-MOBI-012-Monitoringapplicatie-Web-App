@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
+import 'package:monitoringapplicatie_web_app/pages/quat_page.dart';
 
 class Patient extends StatefulWidget {
   const Patient({Key? key}) : super(key: key);
@@ -11,10 +12,18 @@ class Patient extends StatefulWidget {
 
 class _PatientState extends State<Patient> {
   Map<String, List<String>> userSensors = {};
+  late TextEditingController _searchController;
+
   @override
   void initState() {
     super.initState();
-    getSensorDataWithHighestSessionNumber();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -24,73 +33,130 @@ class _PatientState extends State<Patient> {
         child: Column(
           children: [
             const Padding(
-              padding: EdgeInsets.all(15),
-              child: Nav(),
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  Nav(),
+                ],
+              ),
             ),
-            FutureBuilder<QuerySnapshot>(
-              future: getPatienten(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else {
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else {
-                    final patients = snapshot.data!.docs;
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Table(
-                        border: TableBorder.all(),
-                        columnWidths: const <int, TableColumnWidth>{
-                          0: IntrinsicColumnWidth(),
-                          2: FixedColumnWidth(64),
-                        },
-                        defaultVerticalAlignment:
-                            TableCellVerticalAlignment.middle,
-                        children: [
-                          const TableRow(
-                            children: <Widget>[
-                              Expanded(flex: 2, child: Text('Gebruikersnaam')),
-                              Expanded(flex: 2, child: Text('Laast ingelogd')),
-                              Expanded(
-                                  flex: 2,
-                                  child: Text('Laatst data verzonden')),
-                              Expanded(
-                                flex: 2,
-                                child: Text("Actief"),
+            Column(
+              children: [
+                const Text(
+                  'Patiënten',
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 60),
+                Center(
+                  child: FractionallySizedBox(
+                    widthFactor: 0.8,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                'Alle patiënten',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
                               ),
-                              Expanded(flex: 1, child: Text("Acties")),
+                              const Divider(),
+                              const SizedBox(height: 20),
+                              TextField(
+                                controller: _searchController,
+                                decoration: const InputDecoration(
+                                  hintText: 'Zoeken op naam...',
+                                  prefixIcon: Icon(Icons.search),
+                                ),
+                                onChanged: (value) {
+                                  setState(
+                                      () {}); // Om de lijst opnieuw te bouwen wanneer de zoektekst verandert
+                                },
+                              ),
+                              Container(
+                                height: 400,
+                                child: FutureBuilder<QuerySnapshot>(
+                                  future: getPatienten(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                    final patienten = snapshot.data!.docs;
+                                    var filteredPatienten =
+                                        patienten.where((patient) {
+                                      String name = patient['name']
+                                          .toString()
+                                          .toLowerCase();
+                                      String searchTerm =
+                                          _searchController.text.toLowerCase();
+                                      return name.contains(searchTerm);
+                                    }).toList();
+                                    return ListView.builder(
+                                      itemCount: filteredPatienten.length,
+                                      itemBuilder: (context, index) {
+                                        var patient = filteredPatienten[index];
+                                        return Card(
+                                          child: ListTile(
+                                            title: Text(
+                                              patient['name'],
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            subtitle: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Laatst aangemeld: ${_getLastSignedIn(patient['lastSignedIn'])}',
+                                                  style:
+                                                      TextStyle(fontSize: 15),
+                                                ),
+                                                Text(
+                                                  'Laatst data verstuurd: ${_getLastDataSend(patient['lastDataSend'])}',
+                                                  style:
+                                                      TextStyle(fontSize: 15),
+                                                ),
+                                                Text(
+                                                    'Actief : ${patient['isSignedIn'] ? 'Ja' : 'Neen'}')
+                                              ],
+                                            ),
+                                            trailing: ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const QuatPage(
+                                                                title:
+                                                                    "Quat Page")));
+                                              },
+                                              child:
+                                                  const Text('QUAT bekijken'),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              )
                             ],
                           ),
-                          for (var patient in patients)
-                            TableRow(
-                              children: [
-                                Expanded(
-                                    flex: 2,
-                                    child: Text(patient['name'].toString())),
-                                Expanded(
-                                    flex: 2,
-                                    child: Text(_getLastSignedIn(
-                                        patient['lastSignedIn']))),
-                                Expanded(
-                                    flex: 2,
-                                    child: Text(_getLastDataSend(
-                                        patient['lastDataSend']))),
-                                Expanded(
-                                    flex: 2,
-                                    child: Text(patient['isSignedIn'] == true
-                                        ? "Ja"
-                                        : "Nee")),
-                                Expanded(flex: 1, child: Text("Actions")),
-                              ],
-                            ),
-                        ],
-                      ),
-                    );
-                  }
-                }
-              },
-            ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            )
           ],
         ),
       ),
@@ -140,43 +206,6 @@ class _PatientState extends State<Patient> {
           .get();
     } catch (e) {
       print('Fout bij het ophalen van patiëntengegevens: $e');
-      throw e;
-    }
-  }
-
-  Future<Map<String, String>> getSensorDataWithHighestSessionNumber() async {
-    Map<String, String> userLatestSession = {};
-
-    try {
-      QuerySnapshot patientenSnapshot = await getPatienten();
-
-      for (QueryDocumentSnapshot patientSnapshot in patientenSnapshot.docs) {
-        String userId = patientSnapshot['userId'];
-        String patientID = patientSnapshot.id;
-        // Query om alleen de documenten met de hoogste lastSessionNumber te krijgen
-        QuerySnapshot sensorsSnapshot = await FirebaseFirestore.instance
-            .collection('sd-dummy-users/$patientID/sensors')
-            .orderBy('lastSessionNumber', descending: true)
-            .limit(1)
-            .get();
-
-        if (sensorsSnapshot.docs.isNotEmpty) {
-          String highestSessionNumberDocId = sensorsSnapshot.docs.first.id;
-          sensorsSnapshot.docs.first['lastSessionNumber'];
-          int highestSessionNumber =
-              sensorsSnapshot.docs.first['lastSessionNumber'];
-          userLatestSession[userId] =
-              '$highestSessionNumberDocId (LastSessionNumber: $highestSessionNumber)';
-        } else {
-          userLatestSession[userId] = 'Geen sensorgegevens gevonden';
-        }
-      }
-      // Print de map buiten de loop om de volledige map te zien
-      print('Laatste sessienummers per gebruiker: $userLatestSession');
-
-      return userLatestSession;
-    } catch (e) {
-      print('Fout bij het ophalen van sensorgegevens: $e');
       throw e;
     }
   }
