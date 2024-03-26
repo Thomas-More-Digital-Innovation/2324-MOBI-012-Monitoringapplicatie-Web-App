@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -76,14 +75,14 @@ class _LoginWebState extends State<LoginWeb> {
               ),
             ),
           ),
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                height: 450,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                ),
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              height: 450,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.3,
                 child: Column(
@@ -93,7 +92,11 @@ class _LoginWebState extends State<LoginWeb> {
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Text(
                         "Aanmelden",
-                        style: TextStyle(color: Colors.black, letterSpacing: 2, fontSize: 40, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.black,
+                            letterSpacing: 2,
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                     Padding(
@@ -150,14 +153,31 @@ class _LoginWebState extends State<LoginWeb> {
                     ElevatedButton(
                       onPressed: () async {
                         try {
-                          await FirebaseAuth.instance.signInWithEmailAndPassword(
+                          await FirebaseAuth.instance
+                              .signInWithEmailAndPassword(
                             email: adminEmail,
                             password: adminPassword,
                           );
-                          // Navigeer naar de gewenste pagina na een succesvolle login
-                          Navigator.pushReplacementNamed(context, '/home_web');
-                          debugPrint(
-                              "Aanmelding succesvol, voer hier verdere acties uit indien nodig");
+
+                          // Haal de huidige gebruiker op
+                          User? user = FirebaseAuth.instance.currentUser;
+
+                          if (user != null) {
+                            // Roep de functies aan om de laatste inlogtijd bij te werken en isSignedIn-status in te stellen
+                            await updateLastLoggedIn(user.uid);
+                            await updateIsSignedIn(user.uid, true);
+
+                            // Navigeer naar de gewenste pagina na een succesvolle login
+                            Navigator.pushReplacementNamed(
+                                context, '/home_web');
+
+                            debugPrint(
+                                "Aanmelding succesvol, voer hier verdere acties uit indien nodig");
+                          } else {
+                            // Gebruiker is null, wat een onverwachte situatie is
+                            debugPrint(
+                                "Fout: Gebruiker is null na aanmelding.");
+                          }
                         } catch (e) {
                           // Er is een fout opgetreden bij de aanmelding, verwerk de fout hier
                           debugPrint("Fout bij aanmelden: $e");
@@ -174,22 +194,25 @@ class _LoginWebState extends State<LoginWeb> {
                       child: const Text(
                         "Login",
                         style: TextStyle(
-                            color: Colors.white, letterSpacing: 2, fontSize: 16),
+                            color: Colors.white,
+                            letterSpacing: 2,
+                            fontSize: 16),
                       ),
                     ),
+
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: Text(
                         "Heb je nog geen login? Vraag dit dan aan bij je contactpersoon.",
-                        style: TextStyle(color: Colors.grey, letterSpacing: 2, fontSize: 16),
+                        style: TextStyle(
+                            color: Colors.grey, letterSpacing: 2, fontSize: 16),
                       ),
                     ),
                   ],
-
                 ),
               ),
-              ),
             ),
+          ),
         ],
       ),
     );
