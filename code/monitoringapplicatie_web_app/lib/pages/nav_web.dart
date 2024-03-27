@@ -5,6 +5,7 @@ import 'package:monitoringapplicatie_web_app/pages/gebruikers_web.dart';
 import 'package:monitoringapplicatie_web_app/pages/patienten_web.dart';
 import 'package:monitoringapplicatie_web_app/pages/patient.dart';
 import 'package:monitoringapplicatie_web_app/pages/home_web.dart';
+import 'package:monitoringapplicatie_web_app/pages/profiel.dart';
 
 class Nav extends StatefulWidget {
   const Nav({super.key});
@@ -127,7 +128,10 @@ class _NavState extends State<Nav> {
         actions: [
           GestureDetector(
             onTap: () {
-              // Actie voor "Mijn Profiel"
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Profiel()),
+              );
             },
             child: const Row(
               children: [
