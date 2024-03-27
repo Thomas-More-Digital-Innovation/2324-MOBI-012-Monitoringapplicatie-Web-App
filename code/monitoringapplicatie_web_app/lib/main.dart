@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:monitoringapplicatie_web_app/pages/home_web.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
 import 'package:monitoringapplicatie_web_app/pages/login_web.dart';
-import 'package:monitoringapplicatie_web_app/pages/patienten_web.dart';
 import 'package:monitoringapplicatie_web_app/pages/web_dashboard_page.dart';
 import 'package:monitoringapplicatie_web_app/pages/gebruikers_web.dart';
 import 'package:monitoringapplicatie_web_app/pages/patient.dart';
 import 'package:monitoringapplicatie_web_app/pages/quat_page.dart';
+import 'package:monitoringapplicatie_web_app/pages/mijnprofiel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,12 +21,12 @@ void main() async {
   runApp(MaterialApp(
     initialRoute: '/login_web',
     routes: {
+      '/mijnprofiel': (context) => const MijnProfiel(),
       '/patient': (context) => const Patient(),
       '/web_dashboard_page': (context) => WebPage(),
       '/login_web': (context) => const LoginWeb(),
       '/home_web': (context) => const Home_page(),
       '/nav_web': (context) => const Nav(),
-      '/patienten_web': (context) => const Patienten(),
       '/gebruikers_web': (context) => const Gebruikers(),
       '/quatPage': (context) => const QuatPage(
             title: 'QuatPage',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
 import 'package:monitoringapplicatie_web_app/pages/quat_page.dart';
@@ -13,11 +14,15 @@ class Patient extends StatefulWidget {
 class _PatientState extends State<Patient> {
   Map<String, List<String>> userSensors = {};
   late TextEditingController _searchController;
+  late String
+      currentUser; // assuming you store current user ID or username here
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    currentUser =
+        "currentUserId"; // replace this with actual current user ID or username
   }
 
   @override
@@ -33,7 +38,7 @@ class _PatientState extends State<Patient> {
         child: Column(
           children: [
             const Padding(
-              padding: const EdgeInsets.all(15),
+              padding: EdgeInsets.all(15),
               child: Column(
                 children: [
                   Nav(),
@@ -84,7 +89,7 @@ class _PatientState extends State<Patient> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return Center(
+                                      return const Center(
                                         child: CircularProgressIndicator(),
                                       );
                                     }
@@ -106,7 +111,7 @@ class _PatientState extends State<Patient> {
                                           child: ListTile(
                                             title: Text(
                                               patient['name'],
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold),
                                             ),
@@ -116,13 +121,13 @@ class _PatientState extends State<Patient> {
                                               children: [
                                                 Text(
                                                   'Laatst aangemeld: ${_getLastSignedIn(patient['lastSignedIn'])}',
-                                                  style:
-                                                      TextStyle(fontSize: 15),
+                                                  style: const TextStyle(
+                                                      fontSize: 15),
                                                 ),
                                                 Text(
                                                   'Laatst data verstuurd: ${_getLastDataSend(patient['lastDataSend'])}',
-                                                  style:
-                                                      TextStyle(fontSize: 15),
+                                                  style: const TextStyle(
+                                                      fontSize: 15),
                                                 ),
                                                 Text(
                                                     'Actief : ${patient['isSignedIn'] ? 'Ja' : 'Neen'}')
@@ -200,10 +205,22 @@ class _PatientState extends State<Patient> {
 
   Future<QuerySnapshot> getPatienten() async {
     try {
-      return await FirebaseFirestore.instance
-          .collection('sd-dummy-users')
-          .where('role', isEqualTo: 'Patiënt')
-          .get();
+      // Haal de huidige ingelogde gebruiker op
+      User currentUser = FirebaseAuth.instance.currentUser!;
+
+      // Controleer of er een gebruiker is ingelogd
+      if (currentUser != null) {
+        // Gebruik de UID van de huidige gebruiker om patiënten op te halen
+        return await FirebaseFirestore.instance
+            .collection('sd-dummy-users')
+            .where('role', isEqualTo: 'Patiënt')
+            .where("responsible",
+                isEqualTo: currentUser.uid) // Gebruik currentUser.uid
+            .get();
+      } else {
+        // Als er geen gebruiker is ingelogd, gooi een foutmelding
+        throw 'Geen gebruiker ingelogd';
+      }
     } catch (e) {
       print('Fout bij het ophalen van patiëntengegevens: $e');
       throw e;
