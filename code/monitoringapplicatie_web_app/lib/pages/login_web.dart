@@ -52,6 +52,23 @@ class _LoginWebState extends State<LoginWeb> {
     }
   }
 
+  Future determineUserRole(String userId) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('sd-dummy-users')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first.get('role');
+      } else {
+        print('Document niet gevonden voor userId: $userId');
+      }
+    } catch (e) {
+      print("Fout bij bepalen rol: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,10 +82,10 @@ class _LoginWebState extends State<LoginWeb> {
           ),
           Container(
             padding: const EdgeInsets.all(40),
-            child: Text(
+            child: const Text(
               'Revapp',
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 50,
                 fontWeight: FontWeight.w900,
                 color: Colors.black,
@@ -88,8 +105,8 @@ class _LoginWebState extends State<LoginWeb> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 10),
                       child: Text(
                         "Aanmelden",
                         style: TextStyle(
@@ -99,8 +116,8 @@ class _LoginWebState extends State<LoginWeb> {
                             fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 30),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 30),
                       child: Divider(
                         color: Colors.black,
                       ),
@@ -167,9 +184,17 @@ class _LoginWebState extends State<LoginWeb> {
                             await updateLastLoggedIn(user.uid);
                             await updateIsSignedIn(user.uid, true);
 
-                            // Navigeer naar de gewenste pagina na een succesvolle login
-                            Navigator.pushReplacementNamed(
-                                context, '/home_web');
+                            // Bepaal de rol van de gebruiker
+                            String role = await determineUserRole(user.uid);
+
+                            // Navigeer naar de gewenste pagina op basis van de rol
+                            if (role == "Patiënt") {
+                              Navigator.pushReplacementNamed(
+                                  context, '/mijnprofiel');
+                            } else {
+                              Navigator.pushReplacementNamed(
+                                  context, '/home_web');
+                            }
 
                             debugPrint(
                                 "Aanmelding succesvol, voer hier verdere acties uit indien nodig");
