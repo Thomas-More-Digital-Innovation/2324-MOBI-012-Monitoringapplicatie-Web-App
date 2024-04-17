@@ -168,7 +168,11 @@ class _NavState extends State<Nav> {
                 actions: [
                   GestureDetector(
                     onTap: () {
-                      // Action for "Mijn Profiel"
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Profiel()),
+                      );
                     },
                     child: const Row(
                       children: [
@@ -184,62 +188,6 @@ class _NavState extends State<Nav> {
                         ),
                       ],
                     ),
-                    
-                    Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                    Text(
-                      'Gebruikers',
-                      style: TextStyle(fontSize: 20, color: Colors.black),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Profiel()),
-              );
-            },
-            child: const Row(
-              children: [
-                Icon(
-                  Icons.person,
-                  color: Colors.grey,
-                  size: 20,
-                ),
-                Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                Text(
-                  'Mijn Profiel',
-                  style: TextStyle(fontSize: 20, color: Colors.grey),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: 20),
-          GestureDetector(
-            onTap: () async {
-              final user = FirebaseAuth.instance.currentUser;
-              if (user != null) {
-                await updateIsSignedIn(
-                    user.uid, false); // Update isSignedIn in Firestore
-                await FirebaseAuth.instance
-                    .signOut(); // Voer de uitlogactie uit
-              }
-              Navigator.pushNamed(
-                  context, '/login_web'); // Navigeer naar de loginpagina
-            },
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.logout),
-                    onPressed: null,
-                    tooltip: 'Uitloggen',
                   ),
                   const SizedBox(width: 20),
                   GestureDetector(
