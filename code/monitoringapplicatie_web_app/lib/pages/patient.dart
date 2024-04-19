@@ -210,12 +210,19 @@ class _PatientState extends State<Patient> {
 
       // Controleer of er een gebruiker is ingelogd
       if (currentUser != null) {
+        // Haal de naam op van de ingelogde gebruiker
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('sd-dummy-users')
+            .doc(currentUser.uid)
+            .get();
+
+        String responsibleName = userSnapshot['name'];
         // Gebruik de UID van de huidige gebruiker om patiënten op te halen
         return await FirebaseFirestore.instance
             .collection('sd-dummy-users')
             .where('role', isEqualTo: 'Patiënt')
             .where("responsible",
-                isEqualTo: currentUser.uid) // Gebruik currentUser.uid
+            isEqualTo: responsibleName) // Gebruik currentUser.uid
             .get();
       } else {
         // Als er geen gebruiker is ingelogd, gooi een foutmelding
