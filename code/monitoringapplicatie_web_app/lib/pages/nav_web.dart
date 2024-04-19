@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:monitoringapplicatie_web_app/pages/gebruikers_web.dart';
 import 'package:monitoringapplicatie_web_app/pages/patient.dart';
 import 'package:monitoringapplicatie_web_app/pages/home_web.dart';
+import 'package:monitoringapplicatie_web_app/pages/profiel.dart';
 
 class Nav extends StatefulWidget {
   const Nav({Key? key}) : super(key: key);
