@@ -12,6 +12,7 @@ class Gebruikers extends StatefulWidget {
   State<Gebruikers> createState() => _GebruikersState();
 }
 
+
 class _GebruikersState extends State<Gebruikers> {
   Map<String, List<String>> userSensors = {};
   String? selectedRole;
@@ -166,48 +167,51 @@ class _GebruikersState extends State<Gebruikers> {
                                         ),
                                       ),
                                     ),
-                                    Expanded(
-                                      flex: 1,
+                                    SizedBox( // Adjust the SizedBox width as needed
+                                      width: 200,
                                       child: Row(
                                         children: [
-                                          // knop naar de patients statistieken
                                           IconButton(
                                             icon: const Icon(
                                               Icons.bar_chart_outlined,
-                                              color: Colors.black,),
+                                              color: Colors.black,
+                                            ),
                                             tooltip: 'View Charts',
                                             onPressed: null,
                                           ),
-                                          SizedBox(width: 5,),
-                                          // knop naar de patients sensoren
+                                          SizedBox(width: 5),
                                           IconButton(
                                             icon: const Icon(
                                               Icons.sensors_rounded,
-                                              color: Colors.black,),
+                                              color: Colors.black,
+                                            ),
                                             tooltip: 'View Sensors',
                                             onPressed: null,
                                           ),
                                           IconButton(
                                             icon: const Icon(
                                               Icons.insert_link_rounded,
-                                              color: Colors.black,),
+                                              color: Colors.black,
+                                            ),
                                             tooltip: 'Link',
                                             onPressed: null,
                                           ),
                                           IconButton(
                                             icon: const Icon(
                                               Icons.create_rounded,
-                                              color: Colors.black,),
+                                              color: Colors.black,
+                                            ),
                                             tooltip: 'Edit',
-                                            onPressed: null,
+                                            onPressed: () {
+                                              print('Edit button pressed for user: ${patient['name']}');
+                                              _showEditUserDialog(context, patient);
+                                            },
                                           ),
                                           IconButton(
-                                            icon: const Icon(Icons.delete,
-                                              color: Colors.black,),
+                                            icon: const Icon(Icons.delete, color: Colors.black),
                                             tooltip: 'Delete',
                                             onPressed: () {
-                                              _deleteUser(
-                                                  patient['userId']); // Roept de functie op om een gebruiker te verwijderen
+                                              _deleteUser(patient['userId']); // Call the function to delete a user
                                             },
                                           ),
                                         ],
@@ -228,6 +232,118 @@ class _GebruikersState extends State<Gebruikers> {
         ),
       ),
     );
+  }
+
+  // Function om een gebruiker te updaten
+  void _showEditUserDialog(BuildContext context, DocumentSnapshot user) {
+    TextEditingController nameController = TextEditingController(text: user['name']);
+    TextEditingController responsibleController = TextEditingController(text: user['responsible'] ?? '');
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit User'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Name: ',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                  ),
+                  Text(
+                    user['name'],
+                    style: TextStyle(fontSize: 20), // Adjust the font size as needed
+                  ),
+                  FutureBuilder(
+                    future: getPatienten(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        List<DocumentSnapshot> patients = snapshot.data!.docs;
+                        List<DocumentSnapshot> responsiblePatients = patients.where((patient) => patient['role'] == 'Opvolger').toList();
+
+                        List<DropdownMenuItem<String>> dropdownItems = [];
+                        dropdownItems.add(
+                          DropdownMenuItem(
+                            value: '', // Add an empty value option
+                            child: Text('None'), // Display 'None' for users with no selectedResponsible
+                          ),
+                        );
+                        for (var patient in responsiblePatients) {
+                          dropdownItems.add(
+                            DropdownMenuItem(
+                              value: patient['name'], // Use the user's name as the value
+                              child: Text(patient['name']),
+                            ),
+                          );
+                        }
+
+                        return DropdownButtonFormField<String>(
+                          value: responsibleController.text.isNotEmpty ? responsibleController.text : '', // Handle empty value
+                          items: dropdownItems,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              responsibleController.text = newValue ?? '';
+                            });
+                          },
+                          decoration: InputDecoration(labelText: 'Selected Responsible'),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog without updating
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                print('Update User button pressed!');
+                String userId = user.id; // Get the document ID of the user
+                String newResponsible = responsibleController.text; // Get the updated responsible
+
+                print('Updating user with ID: $userId to new responsible: $newResponsible');
+
+                try {
+                  await updateUser(userId, newResponsible);
+                  print('Update successful!');
+                } catch (e) {
+                  print('Error updating user: $e');
+                }
+
+                Navigator.of(context).pop(); // Close the dialog after update
+              },
+              child: Text('Update User'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> updateUser(String uid, String newResponsible) async {
+    try {
+      await FirebaseFirestore.instance.collection('sd-dummy-users').doc(uid).update({
+        'responsible': newResponsible,
+      });
+      print('User updated successfully!');
+      setState(() {});
+    } catch (e) {
+      print('Error updating user: $e');
+      throw e; // Rethrow the error to catch it in the dialog
+    }
   }
 
   // Function om een gebruiker te verwijderen
