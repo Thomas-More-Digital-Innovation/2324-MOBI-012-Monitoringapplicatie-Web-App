@@ -240,7 +240,7 @@ class _PatientState extends State<Patient> {
             .collection('sd-dummy-users')
             .where('role', isEqualTo: 'Patiënt')
             .where("responsible",
-                isEqualTo: responsibleName) // Gebruik currentUser.uid
+            isEqualTo: responsibleName) // Gebruik currentUser.uid
             .get();
       } else {
         // Als er geen gebruiker is ingelogd, gooi een foutmelding
