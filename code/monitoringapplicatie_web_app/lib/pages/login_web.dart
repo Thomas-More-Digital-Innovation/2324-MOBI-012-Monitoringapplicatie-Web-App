@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
 
 class LoginWeb extends StatefulWidget {
   const LoginWeb({Key? key}) : super(key: key);
@@ -190,7 +189,7 @@ class _LoginWebState extends State<LoginWeb> {
                             // Navigeer naar de gewenste pagina op basis van de rol
                             if (role == "Patiënt") {
                               Navigator.pushReplacementNamed(
-                                  context, '/mijnprofiel');
+                                  context, '/profiel');
                             } else {
                               Navigator.pushReplacementNamed(
                                   context, '/home_web');
