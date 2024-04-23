@@ -52,13 +52,10 @@ Future<UserData> getUserData() async {
         );
       }
     } catch (error) {
-      // Handle any errors that occur during the query
-      debugPrint("Error fetching user data: $error");
-      // You might want to throw the error or return a default UserData here
+
       throw error;
     }
   } else {
-    debugPrint("user is null");
     // Current user is null
     return UserData(
       username: "",
