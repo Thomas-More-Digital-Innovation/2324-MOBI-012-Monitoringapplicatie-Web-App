@@ -107,8 +107,6 @@ class _GebruikersState extends State<Gebruikers> {
         String sensorID = sensorSnapshot.id;
         if (sensorSnapshot.exists) {
           sensorIDs.add(sensorID);
-
-          // Voeg hier verdere verwerking toe, indien nodig
         } else {
           print('Geen sensor data gevonden voor Sensor ID: $sensorID');
         }

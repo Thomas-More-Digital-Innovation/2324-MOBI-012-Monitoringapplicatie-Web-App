@@ -133,18 +133,36 @@ class _PatientState extends State<Patient> {
                                                     'Actief : ${patient['isSignedIn'] ? 'Ja' : 'Neen'}')
                                               ],
                                             ),
-                                            trailing: ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const QuatPage(
-                                                                title:
-                                                                    "Quat Page")));
-                                              },
-                                              child:
-                                                  const Text('QUAT bekijken'),
+                                            trailing: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                IconButton(
+                                                  onPressed: () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const QuatPage(
+                                                                    title:
+                                                                        "Quat Page")));
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.bar_chart_outlined,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                    onPressed: () async {
+                                                      removeResponsible(
+                                                          patient.id);
+                                                      setState(
+                                                          () {}); // This will trigger a rebuild of the widget
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.link_off,
+                                                      color: Colors.black,
+                                                    ))
+                                              ],
                                             ),
                                           ),
                                         );
@@ -210,12 +228,19 @@ class _PatientState extends State<Patient> {
 
       // Controleer of er een gebruiker is ingelogd
       if (currentUser != null) {
+        // Haal de naam op van de ingelogde gebruiker
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('sd-dummy-users')
+            .doc(currentUser.uid)
+            .get();
+
+        String responsibleName = userSnapshot['name'];
         // Gebruik de UID van de huidige gebruiker om patiënten op te halen
         return await FirebaseFirestore.instance
             .collection('sd-dummy-users')
             .where('role', isEqualTo: 'Patiënt')
             .where("responsible",
-                isEqualTo: currentUser.uid) // Gebruik currentUser.uid
+                isEqualTo: responsibleName) // Gebruik currentUser.uid
             .get();
       } else {
         // Als er geen gebruiker is ingelogd, gooi een foutmelding
@@ -224,6 +249,18 @@ class _PatientState extends State<Patient> {
     } catch (e) {
       print('Fout bij het ophalen van patiëntengegevens: $e');
       throw e;
+    }
+  }
+
+  void removeResponsible(String paientId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('sd-dummy-users')
+          .doc(paientId)
+          .update({'responsible': null});
+    } catch (e) {
+      print(
+          'Er is een fout opgetreden bij het verwijderen van de verantwoordelijke: $e');
     }
   }
 }
