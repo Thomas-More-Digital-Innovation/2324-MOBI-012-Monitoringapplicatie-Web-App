@@ -7,7 +7,7 @@ import 'package:monitoringapplicatie_web_app/pages/web_dashboard_page.dart';
 import 'package:monitoringapplicatie_web_app/pages/gebruikers_web.dart';
 import 'package:monitoringapplicatie_web_app/pages/patient.dart';
 import 'package:monitoringapplicatie_web_app/pages/quat_page.dart';
-import 'package:monitoringapplicatie_web_app/pages/mijnprofiel.dart';
+import 'package:monitoringapplicatie_web_app/pages/profiel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +21,7 @@ void main() async {
   runApp(MaterialApp(
     initialRoute: '/login_web',
     routes: {
-      '/mijnprofiel': (context) => const MijnProfiel(),
+      '/profiel': (context) => Profiel(),
       '/patient': (context) => const Patient(),
       '/web_dashboard_page': (context) => WebPage(),
       '/login_web': (context) => const LoginWeb(),
