@@ -1,7 +1,17 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
+import 'package:monitoringapplicatie_web_app/pages/quat_page.dart';
+
+import 'Test_List/Patient.dart';
 class Home_page extends StatefulWidget {
   const Home_page({super.key});
   @override
@@ -22,250 +32,200 @@ class _Home_pageState extends State<Home_page> {
     "currentUserId"; // replace this with actual current user ID or username
   }
 
-
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    // maak een kopie van de patienten lijst en sorteer deze
-    //List<Patient> mostRecentPatients = List.from(patients);
-    //mostRecentPatients.sort((a, b) => b.lastUsed.compareTo(a.lastUsed));
-
-    // Take the top 5 most recent patients
-    //mostRecentPatients = mostRecentPatients.take(4).toList();
 
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             const Padding(
-              padding: EdgeInsets.all(15),
-              child: Nav(),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+                 padding: EdgeInsets.all(15),
+               child: Nav(),
+             ),
+            Column(
               children: [
-                Column(
-                  children: [
-                    FutureBuilder<QuerySnapshot>(
-                      future: getLattestPatienten(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return  const Center(child: CircularProgressIndicator());
-                        } else {
-                          if (snapshot.hasError) {
-                            return Center(child: Text('Error: ${snapshot.error}'));
-                          } else {
-                            final patients = snapshot.data!.docs;
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Table(
-                                border: TableBorder.all(),
-                                columnWidths: const <int, TableColumnWidth>{
-                                  //0: IntrinsicColumnWidth(),
-                                  0: FixedColumnWidth(300),
-                                  1: FixedColumnWidth(270),
-                                  2: FixedColumnWidth(100),
-                                },
-                                defaultVerticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                                children: [
-                                  const TableRow(
-                                    children: <Widget>[
-                                      Expanded(flex: 2, child: Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text('Naam',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15),
-                                          textAlign: TextAlign.left,),),),
-                                      Expanded(flex: 2, child: Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text('Laast ingelogd',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15),
-                                          textAlign: TextAlign.left,),),),
-                                      Expanded(flex: 1, child: Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text("Acties", style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15),
-                                          textAlign: TextAlign.left,),),),
-                                    ],
-                                  ),
-                                  for (var patient in patients)
-                                    TableRow(
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                  patient['name'].toString())),),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text(_getLastSignedIn(
-                                                  patient['lastSignedIn']))),),
-                                        const Expanded(
-                                          flex: 1,
-                                          child: Row(
-                                            children: [
-                                              // knop naar de patients statistieken
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.bar_chart_outlined,
-                                                  color: Colors.black,),
-                                                tooltip: 'View Charts',
-                                                onPressed: null,
-                                              ),
-                                              SizedBox(width: 5,),
-                                              // knop naar de patients sensoren
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.sensors_rounded,
-                                                  color: Colors.black,),
-                                                tooltip: 'View Sensors',
-                                                onPressed: null,
-                                              ),
+                const Text(
+                  'Home',
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 60,),
+                Center(
+                  child: FractionallySizedBox(
+                    widthFactor: 0.8,
+                    child: Row(
+                      children: [
+                        // collom van alle patiënten (links)
+                        Expanded(
+                            flex: 4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text('Alle uw patiënten:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.left,),
+                                const Divider(),
+                                Container(
+                                  height: 312.0,
+                                  child: FutureBuilder<QuerySnapshot>(
+                                    future: getPatienten(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return const Center(child: CircularProgressIndicator(),);
+                                      }
 
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                ],
-                              ),
-                            );
-                          }
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    FutureBuilder<QuerySnapshot>(
-                      future: getPatienten(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return  const Center(child: CircularProgressIndicator());
-                        } else {
-                          if (snapshot.hasError) {
-                            return Center(child: Text('Error: ${snapshot.error}'));
-                          } else {
-                            final patients = snapshot.data!.docs;
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Table(
-                                border: TableBorder.all(),
-                                columnWidths: const <int, TableColumnWidth>{
-                                  //0: IntrinsicColumnWidth(),
-                                  0: FixedColumnWidth(300),
-                                  1: FixedColumnWidth(270),
-                                  2: FixedColumnWidth(100),
-                                },
-                                defaultVerticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                                children: [
-                                  const TableRow(
-                                    children: <Widget>[
-                                      Expanded(flex: 2, child: Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text('Naam',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15),
-                                          textAlign: TextAlign.left,),),),
-                                      Expanded(flex: 2, child: Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text('Laast ingelogd',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15),
-                                          textAlign: TextAlign.left,),),),
-                                      Expanded(flex: 1, child: Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text("Acties", style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15),
-                                          textAlign: TextAlign.left,),),),
-                                    ],
+                                      if (snapshot.hasError) {
+                                        return const Center(child: Text("Dit account heeft geen patiënten."),);
+                                      }
+
+                                      final patienten = snapshot.data!.docs;
+
+                                      if (patienten.isEmpty) {
+                                        return const Center(child: Text("Geen patiënten met data."));
+                                      }
+
+                                      return ListView.builder(
+                                        itemCount: patienten.length,
+                                        itemBuilder: (context, index) {
+                                          var patient = patienten[index];
+                                          return Card(
+                                            color: Colors.white,
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(15.0),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(patient['name'] ?? ""),
+                                                      const SizedBox(width: 10,),
+                                                      Text(_getLastDataSend(patient['lastDataSend'])),
+                                                      const Row(
+                                                        children: [
+                                                          IconButton(onPressed: null, icon: Icon(Icons.bar_chart_outlined, color: Colors.black,), tooltip: 'view dashboard',),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+
                                   ),
-                                  for (var patient in patients)
-                                    TableRow(
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                  patient['name'].toString())),),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text(_getLastSignedIn(
-                                                  patient['lastSignedIn']))),),
-                                        const Expanded(
-                                          flex: 1,
-                                          child: Row(
-                                            children: [
-                                              // knop naar de patients statistieken
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.bar_chart_outlined,
-                                                  color: Colors.black,),
-                                                tooltip: 'View Charts',
-                                                onPressed: null,
-                                              ),
-                                              SizedBox(width: 5,),
-                                              // knop naar de patients sensoren
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.sensors_rounded,
-                                                  color: Colors.black,),
-                                                tooltip: 'View Sensors',
-                                                onPressed: null,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                ],
-                              ),
-                            );
-                          }
-                        }
-                      },
+                                )
+                              ],
+                            )
+                        ),
+                        // spacing
+                        const SizedBox(width: 20,),
+                        // collom van de laatste 4 gebruikers (rechts)
+                        Expanded(
+                            flex: 4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text('Laatste Gebruikers:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.left,),
+                                const Divider(),
+                                Container(
+                                  height: 312.0,
+                                  child: FutureBuilder<QuerySnapshot>(
+                                    future: getPatienten(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return const Center(child: CircularProgressIndicator(),);
+                                      }
+                                      
+                                      if (snapshot.hasError) {
+                                        return const Center(child: Text("Dit account heeft geen patiënten."),);
+                                      }
+                                      
+                                      final patienten = snapshot.data!.docs;
+                                      // Filter out patients with null lastDataSend
+                                      final patientsWithLastDataSend = patienten.where((patient) => patient['lastDataSend'] != null).toList();
+
+                                      // Sort patients based on lastDataSend timestamp
+                                      patientsWithLastDataSend.sort((a, b) => (b['lastDataSend'] as Timestamp).compareTo(a['lastDataSend'] as Timestamp) ?? 0);
+
+                                      // Take up to 4 patients, or fewer if there are fewer than 4 patients available
+                                      final latestPatients = patientsWithLastDataSend.take(4).toList();
+
+                                      if (latestPatients.isEmpty) {
+                                        return const Center(child: Text("Geen gebruikers met data."));
+                                      }
+
+                                      return ListView.builder(
+                                        itemCount: latestPatients.length,
+                                        itemBuilder: (context, index) {
+                                          var patient = latestPatients[index];
+                                          return Card(
+                                            color: Colors.white,
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(15.0),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(patient['name'] ?? ""),
+                                                      const SizedBox(width: 10,),
+                                                      Text(_getLastDataSend(patient['lastDataSend'])),
+                                                      const Row(
+                                                        children: [
+                                                          IconButton(onPressed: null, icon: Icon(Icons.bar_chart_outlined, color: Colors.black,), tooltip: 'view dashboard',),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+
+                                  ),
+                                )
+                              ],
+                            )
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                )
               ],
-            ),
+            )
           ],
         ),
       ),
     );
   }
 
-  // Function to calculate time difference
-  String _getLastSignedIn(Timestamp? lastLoggedIn) {
-    if (lastLoggedIn == null) {
-      return 'User heeft zich nog niet aangemeld';
+  String _getLastDataSend(Timestamp? lastDataSend) {
+    if (lastDataSend == null) {
+      return 'User heeft nog geen data verstuurd';
     } else {
-      DateTime lastLoggedInTime = lastLoggedIn.toDate();
+      DateTime lastDataSendTime = lastDataSend.toDate();
       DateTime currentTime = DateTime.now();
-      Duration difference = currentTime.difference(lastLoggedInTime);
-      if (difference.inMinutes < 60) {
-        int minutesDifference = difference.inMinutes;
-        return '$minutesDifference min geleden';
+      Duration difference = currentTime.difference(lastDataSendTime);
+      if (difference.inSeconds < 60) {
+        return '${difference.inSeconds} seconds ago';
+      } else if (difference.inMinutes < 60) {
+        return '${difference.inMinutes} minutes ago';
+      } else if (difference.inHours < 24) {
+        return '${difference.inHours} hours ago';
       } else {
-        int hoursDifference = difference.inHours;
-        return '$hoursDifference uur geleden';
+        return '${difference.inDays} days ago';
       }
     }
   }
@@ -300,72 +260,4 @@ class _Home_pageState extends State<Home_page> {
       throw e;
     }
   }
-
-  Future<QuerySnapshot> getLattestPatienten() async {
-    try {
-      // Haal de huidige ingelogde gebruiker op
-      User currentUser = FirebaseAuth.instance.currentUser!;
-
-      // Controleer of er een gebruiker is ingelogd
-      if (currentUser != null) {
-        // Haal de naam op van de ingelogde gebruiker
-        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-            .collection('sd-dummy-users')
-            .doc(currentUser.uid)
-            .get();
-
-        String responsibleName = userSnapshot['name'];
-        // Gebruik de UID van de huidige gebruiker om patiënten op te halen
-        return await FirebaseFirestore.instance
-            .collection('sd-dummy-users')
-            .where('role', isEqualTo: 'Patiënt')
-            .where("responsible",
-            isEqualTo: responsibleName) // Gebruik currentUser.uid
-            .get();
-      } else {
-        // Als er geen gebruiker is ingelogd, gooi een foutmelding
-        throw 'Geen gebruiker ingelogd';
-      }
-    } catch (e) {
-      print('Fout bij het ophalen van patiëntengegevens: $e');
-      throw e;
-    }
   }
-
-  // Future<QuerySnapshot> getPatienten() async {
-  //   QuerySnapshot patientenSnapshot =
-  //   await FirebaseFirestore.instance.collection('sd-dummy-users').get();
-  //   for (QueryDocumentSnapshot patientSnapshot in patientenSnapshot.docs) {
-  //     String patientID = patientSnapshot.id;
-  //     print('Patient ID: $patientID');
-  //
-  //     QuerySnapshot sensorsSnapshot = await FirebaseFirestore.instance
-  //         .collection('sd-dummy-users/$patientID/sensors')
-  //         .get();
-  //
-  //     List<String> sensorIDs = [];
-  //
-  //     for (QueryDocumentSnapshot sensorSnapshot in sensorsSnapshot.docs) {
-  //       String sensorID = sensorSnapshot.id;
-  //       if (sensorSnapshot.exists) {
-  //         sensorIDs.add(sensorID);
-  //
-  //         // Voeg hier verdere verwerking toe, indien nodig
-  //       } else {
-  //         print('Geen sensor data gevonden voor Sensor ID: $sensorID');
-  //       }
-  //     }
-  //
-  //     userSensors[patientID] = sensorIDs;
-  //   }
-  //
-  //   // Print de map buiten de loop om de volledige map te zien
-  //   print('Alle gebruikerssensoren: $userSensors');
-  //
-  //   return patientenSnapshot;
-  // }
-
-  Future<QuerySnapshot> getRoles() async {
-    return await FirebaseFirestore.instance.collection('roles').get();
-  }
-}
