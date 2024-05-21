@@ -1,7 +1,14 @@
-
-
-
 # RevApp
+
+| Name                                                         | GitHub Username                                           |
+|:-------------------------------------------------------------|:----------------------------------------------------------|
+| [Seppe Stroobants](mailto:r0955288@student.thomasmore.be)    | [SeppeStroobants](https://github.com/SeppeStroobants)     |
+| [Toon Van Dyck](mailto:r0736361@student.thomasmore.be)       | [VanDyckToon](https://github.com/VanDyckToon)             |
+| [César Van Leuffelen](mailto:r0929448@student.thomasmore.be) | [cesarvanleuffelen](https://github.com/cesarvanleuffelen) |
+| [Matt Boeren](mailto:r0932402@student.thomasmore.be)         | [MattBoeren](https://github.com/MattBoeren)               |
+| [Syan Delbart](mailto:r0786843@student.thomasmore.be)        | [syandelbart](https://github.com/syandelbart)             |
+| [Siebe Camerman](mailto:r0889616@student.thomasmore.be)      | [SiebeCamerman](https://github.com/SiebeCamerman)         |
+
 
 RevApp is een applicatie gemaakt in opdracht van Mobilab. Het doel van RevApp is om het opvolgen van revaliderende patiënten gemakkelijker te maken. Dit gebeurt door middel van twee aspecten van deze applicatie.
 
