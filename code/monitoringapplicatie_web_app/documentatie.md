@@ -1,5 +1,6 @@
 # RevApp
 
+Gemaakt door:
 | Name                                                         | GitHub Username                                           |
 |:-------------------------------------------------------------|:----------------------------------------------------------|
 | [Seppe Stroobants](mailto:r0955288@student.thomasmore.be)    | [SeppeStroobants](https://github.com/SeppeStroobants)     |
@@ -33,3 +34,12 @@ De mobiele applicatie wordt vooral gebruikt door de patiënten zelf. Via deze ap
 
 - Een meting met de sensoren starten.
 - Nagaan hoe de connectie is tussen de sensoren en de applicatie.
+
+
+# Functionaliteiten
+
+## Hoe log je in?
+Je kan inloggen bij RevApp door middel van je email adres en wachtwoord. Dit wordt meegegeven door je behandelende arts. Als je dit nog niet hebt moet je dit aanvragen bij je behandelende arts.
+
+Vul in je e-mail in het vakje E-mail en uw paswoord in het vakje Paswoord. Klik vervolgens op de knop ‘Login’ en je wordt ingelogd in het systeem indien je inlog gegevens correct zijn.
+
