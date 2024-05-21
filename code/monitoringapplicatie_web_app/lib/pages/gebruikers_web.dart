@@ -194,7 +194,10 @@ class _GebruikersState extends State<Gebruikers> {
                                               color: Colors.black,
                                             ),
                                             tooltip: 'Link',
-                                            onPressed: null,
+                                            onPressed: () {
+                                              print('Link button pressed for user: ${patient['name']}');
+                                              _showEditUserDialog(context, patient);
+                                            },
                                           ),
                                           IconButton(
                                             icon: const Icon(
@@ -204,15 +207,50 @@ class _GebruikersState extends State<Gebruikers> {
                                             tooltip: 'Edit',
                                             onPressed: () {
                                               print('Edit button pressed for user: ${patient['name']}');
-                                              _showEditUserDialog(context, patient);
+                                              _editName(context, patient);
                                             },
                                           ),
                                           IconButton(
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext
+                                                context) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                        'Delete Patient'),
+                                                    content: const Text(
+                                                        'Are you sure you want to delete this patient?'),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child: const Text(
+                                                            'Cancel'),
+                                                        onPressed:
+                                                            () {
+                                                          Navigator.of(
+                                                              context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                      TextButton(
+                                                        child:
+                                                        const Text(
+                                                          'Delete',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .red),
+                                                        ),
+                                                        onPressed: () {
+                                                          _deleteUser(patient['userId']); // Call the function to delete a user
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
                                             icon: const Icon(Icons.delete, color: Colors.black),
                                             tooltip: 'Delete',
-                                            onPressed: () {
-                                              _deleteUser(patient['userId']); // Call the function to delete a user
-                                            },
                                           ),
                                         ],
                                       ),
@@ -234,7 +272,7 @@ class _GebruikersState extends State<Gebruikers> {
     );
   }
 
-  // Function om een gebruiker te updaten
+  // Functie om een gebruiker zijn opvolger te updaten - dit toont de opvolger van de gebruiker en de optie om het aan te passen, maw de popup + info
   void _showEditUserDialog(BuildContext context, DocumentSnapshot user) {
     TextEditingController nameController = TextEditingController(text: user['name']);
     TextEditingController responsibleController = TextEditingController(text: user['responsible'] ?? '');
@@ -333,6 +371,60 @@ class _GebruikersState extends State<Gebruikers> {
     );
   }
 
+  //Functie om een gebruiker zijn naam aan te passen - dit toont de naam van de gebruiker en de optie om het aan te passen, maw de popup + info
+  void _editName(BuildContext context, DocumentSnapshot user) {
+    TextEditingController nameController = TextEditingController(text: user['name']);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit Name'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(labelText: 'Name'),
+                  ),
+                ],
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog without updating
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                String userId = user.id; // Get the document ID of the user
+                String newName = nameController.text; // Get the updated name
+
+                print('Updating user name with ID: $userId to new name: $newName');
+
+                try {
+                  await updateUserName(userId, newName);
+                  print('Update successful!');
+                } catch (e) {
+                  print('Error updating user name: $e');
+                }
+
+                Navigator.of(context).pop(); // Close the dialog after update
+              },
+              child: Text('Update Name'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  //Functie die het updaten van de opvolger uitvoert
   Future<void> updateUser(String uid, String newResponsible) async {
     try {
       await FirebaseFirestore.instance.collection('sd-dummy-users').doc(uid).update({
@@ -342,6 +434,20 @@ class _GebruikersState extends State<Gebruikers> {
       setState(() {});
     } catch (e) {
       print('Error updating user: $e');
+      throw e; // Rethrow the error to catch it in the dialog
+    }
+  }
+
+  //Funtie die het updaten van de naam uitvoert
+  Future<void> updateUserName(String uid, String newName) async {
+    try {
+      await FirebaseFirestore.instance.collection('sd-dummy-users').doc(uid).update({
+        'name': newName,
+      });
+      print('User name updated successfully!');
+      setState(() {});
+    } catch (e) {
+      print('Error updating user name: $e');
       throw e; // Rethrow the error to catch it in the dialog
     }
   }
