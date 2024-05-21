@@ -74,6 +74,115 @@ class Profiel extends StatefulWidget {
 class _ProfielState extends State<Profiel> {
   late UserData userData;
 
+  User? user = FirebaseAuth.instance.currentUser;
+
+  Future<void> updateIsSignedIn(String userId, bool value) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('sd-dummy-users')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        await querySnapshot.docs.first.reference.update({
+          'isSignedIn': value,
+        });
+      } else {
+        print('Document niet gevonden voor userId: $userId');
+      }
+    } catch (e) {
+      print("Fout bij bijwerken isSignedIn: $e");
+    }
+  }
+
+  Future<void> changePassword(
+      String currentPassword, String newPassword) async {
+    try {
+      final AuthCredential credential = EmailAuthProvider.credential(
+          email: user!.email!, password: currentPassword);
+      await user!.reauthenticateWithCredential(credential);
+      await user!.updatePassword(newPassword);
+      print("Wachtwoord succesvol gewijzigd!");
+
+      // Toon succesbericht aan gebruiker
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Wachtwoord succesvol gewijzigd!"),
+        ),
+      );
+    } catch (e) {
+      print("Fout bij wachtwoord wijzigen: $e");
+      // Toon foutmelding aan gebruiker
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Fout bij wachtwoord wijzigen. Probeer het opnieuw."),
+        ),
+      );
+    }
+  }
+
+  Future<void> _changePassword(BuildContext context) async {
+    String? currentPassword =
+        await _showPasswordInputDialog(context, "Huidig wachtwoord");
+    if (currentPassword != null) {
+      try {
+        final AuthCredential credential = EmailAuthProvider.credential(
+            email: user!.email!, password: currentPassword);
+        await user!.reauthenticateWithCredential(credential);
+
+        String? newPassword =
+            await _showPasswordInputDialog(context, "Nieuw wachtwoord");
+        if (newPassword != null) {
+          await changePassword(currentPassword, newPassword);
+        }
+      } catch (e) {
+        print("Fout bij re-authenticatie: $e");
+        // Toon foutmelding aan gebruiker
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                "Fout bij re-authenticatie. Controleer uw huidig wachtwoord."),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<String?> _showPasswordInputDialog(
+      BuildContext context, String title) async {
+    TextEditingController _passwordController = TextEditingController();
+
+    return await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: TextFormField(
+            controller: _passwordController,
+            obscureText: true,
+            decoration: InputDecoration(hintText: 'Wachtwoord'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(null); // Annuleer
+              },
+              child: const Text('Annuleren'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                String password = _passwordController.text.trim();
+                Navigator.of(context).pop(password); // Geef wachtwoord terug
+              },
+              child: const Text('Bevestigen'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -84,6 +193,13 @@ class _ProfielState extends State<Profiel> {
       role: "",
     );
     loadUserData();
+
+    super.initState();
+    FirebaseAuth.instance.userChanges().listen((User? user) {
+      setState(() {
+        this.user = user;
+      });
+    });
   }
 
   void loadUserData() async {
@@ -94,7 +210,6 @@ class _ProfielState extends State<Profiel> {
       });
     } catch (error) {
       debugPrint("Error loading user data: $error");
-      // Handle error gracefully, maybe show a snackbar or retry mechanism
     }
   }
   @override
@@ -246,14 +361,6 @@ class _ProfielState extends State<Profiel> {
                             )
                           ],
                         ),
-                        Text(
-                          "Wachtwoord aanpassen",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Divider(),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -263,65 +370,25 @@ class _ProfielState extends State<Profiel> {
                                     const EdgeInsets.symmetric(horizontal: 20.0),
                                 child: Column(
                                   children: [
-                                    Text(
-                                      "oud wachtwoord",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    TextField(),
+                                    ElevatedButton(
                                     
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Nieuw wachtwoord",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blue,
+                                      
+                                      textStyle:
+                                          const TextStyle(fontSize: 20, color: Colors.white),
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(10)),
                                       ),
                                     ),
-                                    TextField(),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Bevestig nieuw wachtwoord",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    onPressed: () async {
+                                      await _changePassword(context);
+                                    },
+                                    child: const Text(
+                                      'Wachtwoord wijzigen',
+                                      style: TextStyle(fontSize: 20, color: Colors.black),
                                     ),
-                                    TextField(),
-                                    TextButton(
-                                      onPressed: () {
-                                        // Add your onPressed callback function here
-                                      },
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.green),
-                                        foregroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.black),
-                                      ),
-                                      child: Text('Opslaan'),
-                                    ),
+                                  ),
                                   ],
                                 ),
                               ),
