@@ -182,7 +182,67 @@ class _ProfielState extends State<Profiel> {
     );
   }
 
+  //change email
 
+    Future<String?> _showEmailInputDialog(
+      BuildContext context, String title) async {
+    TextEditingController _emailController = TextEditingController();
+
+    return await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: TextFormField(
+            controller: _emailController,
+            decoration: InputDecoration(hintText: 'e-mailadres'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(null); // Annuleer
+              },
+              child: const Text('Annuleren'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                String email = _emailController.text.trim();
+                Navigator.of(context).pop(email); // Geef wachtwoord terug
+              },
+              child: const Text('Bevestigen'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _changeEmail(BuildContext context) async {
+    String? currentPassword =
+        await _showPasswordInputDialog(context, "Wachtwoord");
+    if (currentPassword != null) {
+      try {
+        final AuthCredential credential = EmailAuthProvider.credential(
+            email: user!.email!, password: currentPassword);
+        await user!.reauthenticateWithCredential(credential);
+
+        String? newEmail =
+            await _showEmailInputDialog(context, "Nieuw e-mailadres");
+        if (newEmail != null) {
+          await user!.verifyBeforeUpdateEmail(newEmail);
+        }
+      } catch (e) {
+        print("Fout bij re-authenticatie: $e");
+        // Toon foutmelding aan gebruiker
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                "Fout bij re-authenticatie. Controleer uw huidig wachtwoord."),
+          ),
+        );
+      }
+    }
+  }
   @override
   void initState() {
     super.initState();
@@ -298,14 +358,6 @@ class _ProfielState extends State<Profiel> {
                             ),
                           ],
                         ),
-                        Text(
-                          "E-mailadres aanpassen",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Divider(),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -315,46 +367,25 @@ class _ProfielState extends State<Profiel> {
                                     const EdgeInsets.symmetric(horizontal: 20.0),
                                 child: Column(
                                   children: [
-                                    Text(
-                                      "Nieuw E-mailadres",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
+                                    ElevatedButton(
+                                    
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blue,
+                                      
+                                      textStyle:
+                                          const TextStyle(fontSize: 20, color: Colors.white),
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(10)),
                                       ),
                                     ),
-                                    TextField(),
-                                    TextButton(
-                                      onPressed: () {
-                                        // Add your onPressed callback function here
-                                      },
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.green),
-                                        foregroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.black),
-                                      ),
-                                      child: Text('Opslaan'),
+                                    onPressed: () async {
+                                      await _changeEmail(context);
+                                    },
+                                    child: const Text(
+                                      'Email wijzigen',
+                                      style: TextStyle(fontSize: 20, color: Colors.black),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Bevestig E-mailadres",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    TextField(),
+                                  ),
                                   ],
                                 ),
                               ),
