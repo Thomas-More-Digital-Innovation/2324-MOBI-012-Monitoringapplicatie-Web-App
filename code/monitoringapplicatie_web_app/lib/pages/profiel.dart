@@ -3,17 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 // Class to hold dynamic user data
 class UserData {
   String username;
-  String lastLoginDate;
+  String lastDataDate;
   String emailAddress;
   String role;
 
   UserData({
     required this.username,
-    required this.lastLoginDate,
+    required this.lastDataDate,
     required this.emailAddress,
     required this.role,
   });
@@ -33,12 +34,20 @@ Future<UserData> getUserData() async {
         DocumentSnapshot userDocument = querySnapshot.docs.first;
         
         String username = userDocument.get('name');
-        String lastLoginDate = userDocument.get('lastSignedIn').toString();
+        String lastDataDate;
+
+        if (userDocument.get('lastDataSend') != null) {
+          Timestamp lastDataTimestamp = userDocument.get('lastDataSend');
+          DateTime lastDataToDate = lastDataTimestamp.toDate();
+          lastDataDate = DateFormat('dd-MM-yyyy HH:mm:ss').format(lastDataToDate);
+        } else {
+          lastDataDate = 'no data was ever sent';
+        }
         String role = userDocument.get('role');
         
         return UserData(
           username: username,
-          lastLoginDate: lastLoginDate,
+          lastDataDate: lastDataDate,
           emailAddress: user.email.toString(),
           role: role,
         );
@@ -46,7 +55,7 @@ Future<UserData> getUserData() async {
         // User document does not exist
         return UserData(
           username: "",
-          lastLoginDate: "",
+          lastDataDate: "",
           emailAddress: "",
           role: "",
         );
@@ -59,7 +68,7 @@ Future<UserData> getUserData() async {
     // Current user is null
     return UserData(
       username: "",
-      lastLoginDate: "",
+      lastDataDate: "",
       emailAddress: "",
       role: "",
     );
@@ -248,7 +257,7 @@ class _ProfielState extends State<Profiel> {
     super.initState();
     userData = UserData(  // Initialize with default values
       username: "",
-      lastLoginDate: "",
+      lastDataDate: "",
       emailAddress: "",
       role: "",
     );
@@ -289,7 +298,7 @@ class _ProfielState extends State<Profiel> {
                   child: Padding(
                     padding: const EdgeInsets.all(100.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
                           "Profiel",
@@ -318,13 +327,13 @@ class _ProfielState extends State<Profiel> {
                                     ),
                                     Text(userData.username), // Dynamic data
                                     Text(
-                                      "Laatste Data",
+                                      "Laatste data uitgezonden",
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    Text(userData.lastLoginDate), // Dynamic data
+                                    Text(userData.lastDataDate), // Dynamic data
                                   ],
                                 ),
                               ),
@@ -364,30 +373,30 @@ class _ProfielState extends State<Profiel> {
                             Expanded(
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Column(
-                                  children: [
-                                    ElevatedButton(
-                                    
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blue,
-                                      
-                                      textStyle:
-                                          const TextStyle(fontSize: 20, color: Colors.white),
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(top: 25.0, bottom: 16.0),
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blue,
+                                            textStyle: const TextStyle(fontSize: 20, color: Colors.white),
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            await _changeEmail(context);
+                                          },
+                                          child: const Text(
+                                            'Email wijzigen',
+                                            style: TextStyle(fontSize: 20, color: Colors.black),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    onPressed: () async {
-                                      await _changeEmail(context);
-                                    },
-                                    child: const Text(
-                                      'Email wijzigen',
-                                      style: TextStyle(fontSize: 20, color: Colors.black),
-                                    ),
-                                  ),
-                                  ],
-                                ),
+                                    ],
+                                  ),                            
                               ),
                             )
                           ],
@@ -398,45 +407,33 @@ class _ProfielState extends State<Profiel> {
                             Expanded(
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 20.0),
+                                const EdgeInsets.symmetric(horizontal: 20.0),
                                 child: Column(
                                   children: [
-                                    ElevatedButton(
-                                    
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blue,
-                                      
-                                      textStyle:
-                                          const TextStyle(fontSize: 20, color: Colors.white),
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    Container(
+                                      margin: const EdgeInsets.all(16.0), // Adjust the margin as needed
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                          textStyle: const TextStyle(fontSize: 20, color: Colors.white),
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          await _changePassword(context);
+                                        },
+                                        child: const Text(
+                                          'Wachtwoord wijzigen',
+                                          style: TextStyle(fontSize: 20, color: Colors.black),
+                                        ),
                                       ),
                                     ),
-                                    onPressed: () async {
-                                      await _changePassword(context);
-                                    },
-                                    child: const Text(
-                                      'Wachtwoord wijzigen',
-                                      style: TextStyle(fontSize: 20, color: Colors.black),
-                                    ),
-                                  ),
                                   ],
                                 ),
                               ),
                             )
                           ],
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            // Add your onPressed callback function here
-                          },
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(Colors.red),
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.black),
-                          ),
-                          child: Text('Log uit'),
                         ),
                       ],
                     ),
