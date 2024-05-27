@@ -45,4 +45,22 @@ Je kan inloggen bij RevApp door middel van je email adres en wachtwoord. Dit wor
 Vul in je e-mail in het vakje E-mail en uw paswoord in het vakje Paswoord. Klik vervolgens op de knop ‘Login’ en je wordt ingelogd in het systeem indien je inlog gegevens correct zijn.
 ![Login Scherm Aangeduid](image.jpg)
 
+## Mijn profiel pagina
+De ‘Mijn profiel pagina’ wordt automatisch getoond voor patiënten. Dit is echter ook de enige pagina die een patiënt kan raadplegen op de webapplicatie.
+Op deze pagina worden de gegevens van de gebruiker getoond zoals de gebruikersnaam, e-mailadres, rol en laatste datum van data verstuurd.
+Op deze pagina is het ook mogelijk om als gebruiker uw e-mail te veranderen en een nieuw paswoord in te stellen.
+### E-mail aanpassen
+![E-mail aanpassen](image.jpg)
+### Wachtwoord aanpassen
+![Wachtwoord aanpassen](image.jpg)
+
+## Start pagina
+Als er een opvolger of admin ingelogd is op de webapplicatie dan krijgt deze de startpagina te zien.
+![Startpagina](image.jpg)
+Op de startpagina krijgt een opvolger aan de linkerkant alle patiënten te zien die gelinkt zijn aan zijn account. Aan de rechterkant krijgt de opvolger een overzicht van de laatste 5 gebruikers die data hebben verstuurd naar het platform. Hierdoor is het makkelijker voor een opvolger om een overzicht te krijgen van zijn patiënten die onlangs oefeningen hebben uitgevoerd.
+Bij elke patiënt staat er een icoon bij die het mogelijk maakt om de resultaten van zijn/haar oefeningen te bekijken.
+![Patient](image.jpg)
+Als je op dit icoon klikt krijg je een overzicht van de patiënt zijn resultaten door middel van een grafiek. Hieruit kan de behandelende arts nagaan hoe de patiënt zijn oefeningen doet.
+
+## Patiënten pagina
 
