@@ -49,10 +49,22 @@ Vul in je e-mail in het vakje E-mail en uw paswoord in het vakje Paswoord. Klik 
 De ‘Mijn profiel pagina’ wordt automatisch getoond voor patiënten. Dit is echter ook de enige pagina die een patiënt kan raadplegen op de webapplicatie.
 Op deze pagina worden de gegevens van de gebruiker getoond zoals de gebruikersnaam, e-mailadres, rol en laatste datum van data verstuurd.
 Op deze pagina is het ook mogelijk om als gebruiker uw e-mail te veranderen en een nieuw paswoord in te stellen.
+![ProfielScherm](./documentatieImg/ProfielScherm.png)
 ### E-mail aanpassen
-![E-mail aanpassen](image.jpg)
+Om uw e-mailadres aan te passen moet je klikken op de knop 'E-mail wijzigen'.
+![E-mail aanpassen](ProfielScherm2.png)
+Vervolgens komt er een pop-up scherm die vraagt om je wachtwoord in te vullen.
+![E-mail aanpassen](ProfielScherm3.png)
+Hierna krijg je de optie om een nieuw e-mailadres op te geven. Klik vervolgens 'Bevestigen' om op te slaan.
+![E-mail aanpassen](ProfielScherm5.png)
 ### Wachtwoord aanpassen
-![Wachtwoord aanpassen](image.jpg)
+Om uw wachtwoord aan te passen moet je klikken op de knop 'Wachtwoord wijzigen'.
+![Wachtwoord aanpassen](ProfielScherm4.png)
+Vervolgens komt er een pop-up scherm die vraagt om je wachtwoord in te vullen. Klik op 'Bevestigen' om door te gaan.
+![Wachtwoord aanpassen](ProfielScherm6.png)
+Vul in je nieuwe wachtwoord en klik 'Bevestigen' om door te gaan.
+![Wachtwoord aanpassen](ProfielScherm7.png)
+Je nieuwe wachtwoord is nu opgeslagen in het systeem.
 
 ## Start pagina
 Als er een opvolger of admin ingelogd is op de webapplicatie dan krijgt deze de startpagina te zien.
@@ -60,7 +72,7 @@ Als er een opvolger of admin ingelogd is op de webapplicatie dan krijgt deze de 
 Op de startpagina krijgt een opvolger aan de linkerkant alle patiënten te zien die gelinkt zijn aan zijn account. Aan de rechterkant krijgt de opvolger een overzicht van de laatste 5 gebruikers die data hebben verstuurd naar het platform. Hierdoor is het makkelijker voor een opvolger om een overzicht te krijgen van zijn patiënten die onlangs oefeningen hebben uitgevoerd.
 ## Resultaten raadplegen van patiënt
 Bij elke patiënt staat er een icoon bij die het mogelijk maakt om de resultaten van zijn/haar oefeningen te bekijken.
-![Patient](./documentatieImg/StartScherm2.png)
+![Startpagina](./documentatieImg/StartScherm2.png)
 Als je op dit icoon klikt krijg je een overzicht van de patiënt zijn resultaten door middel van een grafiek. Hieruit kan de behandelende arts nagaan hoe de patiënt zijn oefeningen doet.
 
 ## Patiënten pagina
