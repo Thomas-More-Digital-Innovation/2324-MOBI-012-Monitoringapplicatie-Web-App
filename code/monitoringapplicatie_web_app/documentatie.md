@@ -58,9 +58,24 @@ Op deze pagina is het ook mogelijk om als gebruiker uw e-mail te veranderen en e
 Als er een opvolger of admin ingelogd is op de webapplicatie dan krijgt deze de startpagina te zien.
 ![Startpagina](./documentatieImg/StartScherm.png)
 Op de startpagina krijgt een opvolger aan de linkerkant alle patiënten te zien die gelinkt zijn aan zijn account. Aan de rechterkant krijgt de opvolger een overzicht van de laatste 5 gebruikers die data hebben verstuurd naar het platform. Hierdoor is het makkelijker voor een opvolger om een overzicht te krijgen van zijn patiënten die onlangs oefeningen hebben uitgevoerd.
+## Resultaten raadplegen van patiënt
 Bij elke patiënt staat er een icoon bij die het mogelijk maakt om de resultaten van zijn/haar oefeningen te bekijken.
 ![Patient](./documentatieImg/StartScherm2.png)
 Als je op dit icoon klikt krijg je een overzicht van de patiënt zijn resultaten door middel van een grafiek. Hieruit kan de behandelende arts nagaan hoe de patiënt zijn oefeningen doet.
 
 ## Patiënten pagina
+De patiënten pagina geeft een overzicht van alle patiënten van een behandelende arts. Op deze pagina krijgt hij/zij een overzicht van al zijn patiënten.
+![Patientpagina](./documentatieImg/PatientScherm.png)
+### Zoekfunctie
+De behandelende arts heeft ook de mogelijkheid om via een zoekbalk te zoeken achter een specifieke patiënt. Doormiddel van het invulveld zal de applicatie te patiënten laten zien die voldoen aan de zoekterm.
+![Patientpagina](./documentatieImg/PatientScherm2.png)
+### Resultaten raadplegen van patiënt
+Net zoals op de startpagina, kan ook hier de behandelende arts de resultaten van zijn patiënten raadplegen, door middel van op het icoon te klikken.
+![Patientpagina](./documentatieImg/PatientScherm3.png)
+### Loskoppelen van patiënt
+Als de patiënt om welke reden dan ook niet langer verbonden is met de behandelend arts, kan de arts de patiënt ontkoppelen door op het juiste pictogram te klikken. Dit zal resulteren in het loskoppelen van de patiënt van de behandelend arts en de patiënt zal tevens uit het overzicht van de arts verdwijnen.
+![Patientpagina](./documentatieImg/PatientScherm4.png)
+Hierna verschijnt er een pop-upvenster dat u vraagt om te bevestigen of u deze patiënt daadwerkelijk wilt ontkoppelen. Als u op 'ontkoppelen' klikt, verdwijnt deze patiënt uit uw overzicht.
+![Patientpagina](./documentatieImg/PatientScherm5.png)
 
+## Gebruiker pagina
