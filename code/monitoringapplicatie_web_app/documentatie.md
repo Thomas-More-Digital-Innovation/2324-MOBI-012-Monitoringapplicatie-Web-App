@@ -44,7 +44,7 @@ Je kan inloggen bij RevApp door middel van je email adres en wachtwoord. Dit wor
 ![Login Scherm](./documentatieImg/LoginScherm.png)
 Vul in je e-mail in het vakje E-mail en uw paswoord in het vakje Paswoord. Klik vervolgens op de knop ‘Login’ en je wordt ingelogd in het systeem indien je inlog gegevens correct zijn.
 ![Login Scherm Aangeduid](./documentatieImg/LoginScherm2.png)
-
+---
 ## Mijn profiel pagina
 De ‘Mijn profiel pagina’ wordt automatisch getoond voor patiënten. Dit is echter ook de enige pagina die een patiënt kan raadplegen op de webapplicatie.
 Op deze pagina worden de gegevens van de gebruiker getoond zoals de gebruikersnaam, e-mailadres, rol en laatste datum van data verstuurd.
