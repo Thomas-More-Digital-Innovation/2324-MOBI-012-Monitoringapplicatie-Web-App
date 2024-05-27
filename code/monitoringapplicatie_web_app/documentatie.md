@@ -52,18 +52,18 @@ Op deze pagina is het ook mogelijk om als gebruiker uw e-mail te veranderen en e
 ![ProfielScherm](./documentatieImg/ProfielScherm.png)
 ### E-mail aanpassen
 Om uw e-mailadres aan te passen moet je klikken op de knop 'E-mail wijzigen'.
-![E-mail aanpassen](ProfielScherm2.png)
+![E-mail aanpassen](./documentatieImg/ProfielScherm2.png)
 Vervolgens komt er een pop-up scherm die vraagt om je wachtwoord in te vullen.
-![E-mail aanpassen](ProfielScherm3.png)
+![E-mail aanpassen](./documentatieImg/ProfielScherm3.png)
 Hierna krijg je de optie om een nieuw e-mailadres op te geven. Klik vervolgens 'Bevestigen' om op te slaan.
-![E-mail aanpassen](ProfielScherm5.png)
+![E-mail aanpassen](./documentatieImg/ProfielScherm5.png)
 ### Wachtwoord aanpassen
 Om uw wachtwoord aan te passen moet je klikken op de knop 'Wachtwoord wijzigen'.
-![Wachtwoord aanpassen](ProfielScherm4.png)
+![Wachtwoord aanpassen](./documentatieImg/ProfielScherm4.png)
 Vervolgens komt er een pop-up scherm die vraagt om je wachtwoord in te vullen. Klik op 'Bevestigen' om door te gaan.
-![Wachtwoord aanpassen](ProfielScherm6.png)
+![Wachtwoord aanpassen](./documentatieImg/ProfielScherm6.png)
 Vul in je nieuwe wachtwoord en klik 'Bevestigen' om door te gaan.
-![Wachtwoord aanpassen](ProfielScherm7.png)
+![Wachtwoord aanpassen](./documentatieImg/ProfielScherm7.png)
 Je nieuwe wachtwoord is nu opgeslagen in het systeem.
 
 ## Start pagina
