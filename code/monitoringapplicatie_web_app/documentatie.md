@@ -44,7 +44,7 @@ Je kan inloggen bij RevApp door middel van je email adres en wachtwoord. Dit wor
 ![Login Scherm](./documentatieImg/LoginScherm.png)
 Vul in je e-mail in het vakje E-mail en uw paswoord in het vakje Paswoord. Klik vervolgens op de knop ‘Login’ en je wordt ingelogd in het systeem indien je inlog gegevens correct zijn.
 ![Login Scherm Aangeduid](./documentatieImg/LoginScherm2.png)
----
+
 ## Mijn profiel pagina
 De ‘Mijn profiel pagina’ wordt automatisch getoond voor patiënten. Dit is echter ook de enige pagina die een patiënt kan raadplegen op de webapplicatie.
 Op deze pagina worden de gegevens van de gebruiker getoond zoals de gebruikersnaam, e-mailadres, rol en laatste datum van data verstuurd.
@@ -79,3 +79,35 @@ Hierna verschijnt er een pop-upvenster dat u vraagt om te bevestigen of u deze p
 ![Patientpagina](./documentatieImg/PatientScherm5.png)
 
 ## Gebruiker pagina
+De gebruikerspagina biedt een overzicht van alle gebruikers in het systeem en toont diverse informatie over elke gebruiker, zoals hun gebruikersnaam, de datum van de laatste login, hun rol, hun actieve status en wie hun opvolger is. Bovendien heeft elke gebruiker toegang tot een reeks knoppen met verschillende functionaliteiten, die in deze handleiding verder worden besproken.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm.png)
+### Gebruiker toevoegen
+Er is een mogelijkheid om een gebruiker toe te voegen tot het systeem. Hiervoor moet je klikken op het plus icoon bovenaan het scherm.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm1.png)
+Vervolgens komt er een pop-up te voorschijn waar je de gegevens van de nieuwe gebruiker moet invullen.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm2.png)
+Wanneer een gebruiker de rol van patiënt krijgt, wordt er een extra invulveld toegevoegd waarin de opvolger van de patiënt kan worden aangeduid. Hierdoor wordt de behandelend arts niet alleen aan de patiënt toegewezen, maar verschijnt de patiënt ook in de lijst van de patiënten van de arts.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm3.png)
+Als alle informatie is ingevuld, dan kan de gebruiker toegevoegd worden tot het systeem door te klikken op de knop 'Create User'. Vervolgens zal de nieuwe gebruiker in het systeem terecht komen.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm4.png)
+### Opvolger aanpassen van gebruiker
+Het is mogelijk om een andere opvolger aan te wijzen voor een patiënt in het systeem. Als een patiënt wordt overgedragen van de ene behandelend arts naar de andere, kan dit worden gedaan via het link-icoon.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm5.png)
+Hierdoor verschijnt er een pop-upvenster waarin de naam van de gebruiker en de huidige behandelend arts worden weergegeven. 
+![Gebruikerpagina](./documentatieImg/GebruikerScherm6.png)
+Vervolgens kan men in de lijst van behandelende artsen een nieuwe arts selecteren en deze wijziging opslaan door te klikken op de knop 'Update User'.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm7.png)
+### Gebruikersnaam aanpassen
+In het systeem kan de naam van een gebruiker ook worden aangepast. Dit kan door op het edit-icoon te klikken.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm8.png)
+Hierdoor verschijnt er een pop-upvenster waarin de naam van de gebruiker ewordt weergegeven en deze aangepast kan worden. Om de aanpassing op te slagen moet men klikken op de knop 'Update Name'.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm9.png)
+### Gebruiker verwijderen
+Je kan ook een gebruiker verwijderen uit het systeem. Dit kan door op het delete-icoon te klikken.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm10.png)
+Hierdoor verschijnt er een pop-upvenster waar er expliciet wordt gevraagd of je zeker bent om deze gebruiker te verwijderen. Door op de 'Delete' knop te klikken, wordt de gebruiker verwijderd uit het systeem.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm11.png)
+### Resultaten raadplegen van een gebruiker
+Je kunt ook de resultaten van elke gebruiker raadplegen door op het "View Charts"-icoon te klikken.
+![Gebruikerpagina](./documentatieImg/GebruikerScherm12.png)
+Vervolgens krijg je een overzicht van de resultaten van de patiënt zijn/haar oefeningen.
