@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:intl/intl.dart';
+
 void main() {
   runApp(WebPage());
 }
@@ -11,6 +10,7 @@ void main() {
 class WebPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'RevAPP WEB',
       theme: ThemeData(
@@ -162,18 +162,20 @@ class ExerciseData {
   final double value;
 }
 
-void getUserSensorData() async {
+List<List<double>> quatData1 = [];
+
+void getUserSensorData1() async {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   DocumentSnapshot userDocument = await firestore
       .collection('sd-dummy-users')
-      .doc('GXNDW2WtvpSqt1Ly5KQyoy8dAzH2')
+      .doc('ChApbk30XlNl1no5ToIyI3UEYhg2')
       .get();
 
   if (userDocument.exists) {
     QuerySnapshot sensorsSnapshot = await firestore
         .collection('sd-dummy-users')
-        .doc('GXNDW2WtvpSqt1Ly5KQyoy8dAzH2')
+        .doc('ChApbk30XlNl1no5ToIyI3UEYhg2')
         .collection('sensors')
         .get();
 
@@ -181,10 +183,10 @@ void getUserSensorData() async {
       if (sensorDoc.id == 'D4:22:CD:00:92:2E') {
         QuerySnapshot sessionSnapshot = await firestore
             .collection('sd-dummy-users')
-            .doc('GXNDW2WtvpSqt1Ly5KQyoy8dAzH2')
+            .doc('ChApbk30XlNl1no5ToIyI3UEYhg2')
             .collection('sensors')
             .doc(sensorDoc.id)
-            .collection('session1')
+            .collection('session5')
             .orderBy("sessionTime")
             .get();
 
@@ -194,6 +196,6 @@ void getUserSensorData() async {
       }
     }
   } else {
-    print('No user found with name Seppe');
+    print('No user found with name Toon');
   }
 }

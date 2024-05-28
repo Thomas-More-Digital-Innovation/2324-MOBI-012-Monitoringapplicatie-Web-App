@@ -29,14 +29,14 @@ class _QuatPageState extends State<QuatPage> {
 
   @override
   Widget build(BuildContext context) {
-    double angle = calculateQuaternionAngle(quaternion1, quaternion2);
+    qautToAngle(quaternion1, quaternion2);
 
-    return Scaffold(
+    return const Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 50),
+          SizedBox(height: 50),
           // Display the variable on the screen
-          Text('Resulting angle: ${angle.toString()}'),
+          Text('Resulting angle: hello world'),
         ],
       ),
     );
