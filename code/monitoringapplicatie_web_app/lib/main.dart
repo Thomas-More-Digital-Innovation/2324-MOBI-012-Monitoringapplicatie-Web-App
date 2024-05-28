@@ -23,7 +23,7 @@ void main() async {
     routes: {
       '/profiel': (context) => Profiel(),
       '/patient': (context) => const Patient(),
-      '/web_dashboard_page': (context) => WebPage(),
+      '/dash': (context) => WebPage(),
       '/login_web': (context) => const LoginWeb(),
       '/home_web': (context) => const Home_page(),
       '/nav_web': (context) => const Nav(),
