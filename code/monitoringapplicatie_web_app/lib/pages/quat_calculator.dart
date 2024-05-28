@@ -1,64 +1,54 @@
 import 'dart:math';
+import 'package:vector_math/vector_math.dart';
 
-class QuatCalculator {
-  final List<dynamic> quaternion1;
-  final List<dynamic> quaternion2;
+void qautToAngle(List<double> quaternion1, List<double>quaternion2) {
 
-  QuatCalculator(this.quaternion1, this.quaternion2);
+  // defining the different values of the quaternions separate
+  // naming q[quaternion num.][which value]
+  double q10 = quaternion1[0];
+  double q11 = quaternion1[1];
+  double q12 = quaternion1[2];
+  double q13 = quaternion1[3];
+
+  double q20 = quaternion2[0];
+  double q21 = quaternion2[1];
+  double q22 = quaternion2[2];
+  double q23 = quaternion2[3];
+
+  // make quaternion objects
+  Quaternion q1 = Quaternion(q10, q11, q12, q13);
+  Quaternion q2 = Quaternion(q20, q21, q22, q23);
+
+  // convert from quaternions to rotation matrices
+  Matrix3 rot1 = q1.asRotationMatrix();
+  Matrix3 rot2 = q2.asRotationMatrix();
+
+  // inverse the second rotation matrix
+  double a = rot1[0];
+  double b = rot1[1];
+  double c = rot1[2];
+  double d = rot1[3];
+  double e = rot1[4];
+  double f = rot1[5];
+  double g = rot1[6];
+  double h = rot1[7];
+  double i = rot1[8];
+
+  double rot2Det = rot1.invert();
+  List<double> inverseRot2 = [(1/rot2Det * ((e*i) - (h*f))),(1/rot2Det * (-1 * ((b*i) - (h*c)))), (1/rot2Det * ((b*f) - (e*c))),
+    (1/rot2Det * (-1 * ((d*i) - (g*f)))), (1/rot2Det * ((a*i) - (g*c))), (1/rot2Det * (-1 * ((a*f) - (d*c)))),
+    (1/rot2Det * ((d*h) - (g*e))), (1/rot2Det * (-1 * ((a*h) - (g*b)))), (1/rot2Det * ((a*e) - (d*b)))];
+
+  Matrix3 rot2Core = Matrix3.fromList(inverseRot2);
+
+  // multiply to rotation quaternions
+  Matrix3 endRot = rot2.multiplied(rot2Core);
+
+  // correcte hoek in matrix --> enkele hoek [alpha]
+  double trace = endRot[0] + endRot[4] + endRot[8];
+  double radAngle = acos((trace - 1) / 2);
+  double angle = degrees(radAngle);
+
+  print(angle);
+
 }
-
-double calculateQuaternionAngle(
-    List<double> quaternion1, List<double> quaternion2) {
-  // Calculate magnitudes
-  double magnitudeQuaternion1 = sqrt(pow(quaternion1[0], 2) +
-      pow(quaternion1[1], 2) +
-      pow(quaternion1[2], 2) +
-      pow(quaternion1[3], 2));
-  double magnitudeQuaternion2 = sqrt(pow(quaternion2[0], 2) +
-      pow(quaternion2[1], 2) +
-      pow(quaternion2[2], 2) +
-      pow(quaternion2[3], 2));
-
-  // Calculate dot product
-  double dotProduct = quaternion1[0] * quaternion2[0] +
-      quaternion1[1] * quaternion2[1] +
-      quaternion1[2] * quaternion2[2] +
-      quaternion1[3] * quaternion2[3];
-
-  // Calculate angle in radians
-  double angleRadians =
-      2 * acos(dotProduct / (magnitudeQuaternion1 * magnitudeQuaternion2));
-
-  // Convert radians to degrees
-  double angleDegrees = angleRadians * (180 / pi);
-
-  return angleDegrees;
-}
-
-/*double calculateAngle(List<double> q1, List<double> q2) {
-
-  double dotProduct = q1[0] * q2[0] + q1[1] * q2[1] + q1[2] * q2[2];
-  double magnitudeV1 = sqrt(q1[0] * q1[0] + q1[1] * q1[1] + q1[2] * q1[2]);
-  double magnitudeV2 = sqrt(q2[0] * q2[0] + q2[1] * q2[1] + q2[2] * q2[2]);
-  double cosAngle = dotProduct / (magnitudeV1 * magnitudeV2);
-
-  cosAngle = cosAngle.clamp(-1.0, 1.0);
-
-  return acos(cosAngle) * (180 / pi);
-}*/
-
-/*
-void main() {
-  QuatCalculator q1 = QuatCalculator(1, 0, 1, 0);
-  QuatCalculator q2 = QuatCalculator(1, 0.5, 0.5, 0.5);
-
-  List<List<double>> matrix1 = q1.toRotationMatrix();
-  List<List<double>> matrix2 = q2.toRotationMatrix();
-
-  double angle = calculateAngle(
-      [matrix1[0][0], matrix1[1][0], matrix1[2][0]],
-      [matrix2[0][0], matrix2[1][0], matrix2[2][0]]
-  );
-
-  print('The angle between the two corners on the x-axis is: $angle degrees');
-}*/

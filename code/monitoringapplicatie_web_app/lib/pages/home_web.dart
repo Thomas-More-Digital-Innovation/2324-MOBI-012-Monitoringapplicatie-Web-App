@@ -21,8 +21,7 @@ class Home_page extends StatefulWidget {
 class _Home_pageState extends State<Home_page> {
   Map<String, List<String>> userSensors = {};
   late TextEditingController _searchController;
-  late String
-  currentUser; // assuming you store current user ID or username here
+  late String currentUser; // assuming you store current user ID or username here
 
   @override
   void initState() {
