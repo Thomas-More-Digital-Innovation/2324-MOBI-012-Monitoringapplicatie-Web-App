@@ -41,6 +41,7 @@ dependencies:
   syncfusion_flutter_charts: ^25.2.5
   url_launcher: ^6.0.9
   fl_chart: ^0.68.0
+  vector_math: ^2.1.4
   
 dev_dependencies:
   flutter_test:
