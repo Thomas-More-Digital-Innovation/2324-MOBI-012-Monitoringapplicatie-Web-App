@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:monitoringapplicatie_web_app/pages/nav_web.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
+void main() {
+  runApp(WebPage());
+}
 
 class WebPage extends StatelessWidget {
   @override
@@ -18,556 +21,21 @@ class WebPage extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              const Padding(padding: EdgeInsets.all(15),
-              child: Nav()),
+              const Padding(
+                padding: EdgeInsets.all(15),
+                child: Nav(),
+              ),
               Column(
                 children: [
-                  const Text('Statistieken Patient X', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
-                  const SizedBox(height: 60,),
-                  Center(
-                    child: FractionallySizedBox(
-                      widthFactor: 0.8,
-                      child: Row(
-                        children: [
-                          // Hoek over tijd
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('max hoek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.left,),
-                                Container(
-                                  height: MediaQuery.of(context).size.width * 0.4,
-                                  child: StreamBuilder(
-                                    stream:
-                                        FirebaseFirestore.instance.collection('DummyData').snapshots(),
-                                    builder: (
-                                      BuildContext context,
-                                      AsyncSnapshot<QuerySnapshot> snapshot,
-                                    ) {
-                                      if (!snapshot.hasData) return const SizedBox.shrink();
-
-                                      // Extract data for the chart
-                                      List<ChartData> chartDataList = snapshot.data!.docs.map((doc) {
-                                        final int value = doc['X'] as int;
-                                        final Timestamp timestamp = doc['date'] as Timestamp;
-                                        final DateTime date = timestamp.toDate();
-                                        return ChartData(value, date);
-                                      }).toList();
-
-                                      // Use a set to keep track of unique dates
-                                      Set<DateTime> uniqueDates = Set<DateTime>();
-
-                                      // Aggregate data by day and collect unique dates
-                                      Map<DateTime, int> aggregatedData = {};
-                                      for (ChartData data in chartDataList) {
-                                        DateTime day =
-                                            DateTime(data.date.year, data.date.month, data.date.day);
-                                        if (!aggregatedData.containsKey(day)) {
-                                          aggregatedData[day] = data.value;
-                                          uniqueDates.add(day);
-                                        } else {
-                                          aggregatedData[day] = aggregatedData[day]! + data.value;
-                                        }
-                                      }
-
-                                      // Convert aggregated data to a list
-                                      List<ChartData> aggregatedChartDataList = uniqueDates
-                                          .map((date) => ChartData(aggregatedData[date]!, date))
-                                          .toList();
-
-                                      // Sort the aggregated data by date
-                                      aggregatedChartDataList.sort((a, b) => a.date.compareTo(b.date));
-
-                                      return Column(
-                                        children: [
-                                          // Line Chart
-                                          Expanded(
-                                            child: SfCartesianChart(
-                                              primaryXAxis: DateTimeAxis(
-                                                dateFormat:
-                                                    DateFormat('dd MMM'), // Display only day and month
-                                                interval: 1, // Display every day
-                                              ),
-                                              series: <LineSeries<ChartData, DateTime>>[
-                                                LineSeries<ChartData, DateTime>(
-                                                  dataSource: aggregatedChartDataList,
-                                                  xValueMapper: (ChartData data, _) => data.date,
-                                                  yValueMapper: (ChartData data, _) => data.value,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          // List View
-                                          Expanded(
-                                            child: ListView.builder(
-                                              itemCount: snapshot.data!.docs.length,
-                                              itemBuilder: (BuildContext context, int index) {
-                                                final docData = snapshot.data?.docs[index];
-                                                final int value = (docData!['X'] as int);
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Hoek over tijd
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('max hoek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.left,),
-                                Container(
-                                  height: MediaQuery.of(context).size.width * 0.4,
-                                  child: StreamBuilder(
-                                    stream:
-                                    FirebaseFirestore.instance.collection('DummyData').snapshots(),
-                                    builder: (
-                                        BuildContext context,
-                                        AsyncSnapshot<QuerySnapshot> snapshot,
-                                        ) {
-                                      if (!snapshot.hasData) return const SizedBox.shrink();
-
-                                      // Extract data for the chart
-                                      List<ChartData> chartDataList = snapshot.data!.docs.map((doc) {
-                                        final int value = doc['X'] as int;
-                                        final Timestamp timestamp = doc['date'] as Timestamp;
-                                        final DateTime date = timestamp.toDate();
-                                        return ChartData(value, date);
-                                      }).toList();
-
-                                      // Use a set to keep track of unique dates
-                                      Set<DateTime> uniqueDates = Set<DateTime>();
-
-                                      // Aggregate data by day and collect unique dates
-                                      Map<DateTime, int> aggregatedData = {};
-                                      for (ChartData data in chartDataList) {
-                                        DateTime day =
-                                        DateTime(data.date.year, data.date.month, data.date.day);
-                                        if (!aggregatedData.containsKey(day)) {
-                                          aggregatedData[day] = data.value;
-                                          uniqueDates.add(day);
-                                        } else {
-                                          aggregatedData[day] = aggregatedData[day]! + data.value;
-                                        }
-                                      }
-
-                                      // Convert aggregated data to a list
-                                      List<ChartData> aggregatedChartDataList = uniqueDates
-                                          .map((date) => ChartData(aggregatedData[date]!, date))
-                                          .toList();
-
-                                      // Sort the aggregated data by date
-                                      aggregatedChartDataList.sort((a, b) => a.date.compareTo(b.date));
-
-                                      return Column(
-                                        children: [
-                                          // Line Chart
-                                          Expanded(
-                                            child: SfCartesianChart(
-                                              primaryXAxis: DateTimeAxis(
-                                                dateFormat:
-                                                DateFormat('dd MMM'), // Display only day and month
-                                                interval: 1, // Display every day
-                                              ),
-                                              series: <LineSeries<ChartData, DateTime>>[
-                                                LineSeries<ChartData, DateTime>(
-                                                  dataSource: aggregatedChartDataList,
-                                                  xValueMapper: (ChartData data, _) => data.date,
-                                                  yValueMapper: (ChartData data, _) => data.value,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          // List View
-                                          Expanded(
-                                            child: ListView.builder(
-                                              itemCount: snapshot.data!.docs.length,
-                                              itemBuilder: (BuildContext context, int index) {
-                                                final docData = snapshot.data?.docs[index];
-                                                final int value = (docData!['X'] as int);
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Hoek over tijd
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('max hoek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.left,),
-                                Container(
-                                  height: MediaQuery.of(context).size.width * 0.4,
-                                  child: StreamBuilder(
-                                    stream:
-                                    FirebaseFirestore.instance.collection('DummyData').snapshots(),
-                                    builder: (
-                                        BuildContext context,
-                                        AsyncSnapshot<QuerySnapshot> snapshot,
-                                        ) {
-                                      if (!snapshot.hasData) return const SizedBox.shrink();
-
-                                      // Extract data for the chart
-                                      List<ChartData> chartDataList = snapshot.data!.docs.map((doc) {
-                                        final int value = doc['X'] as int;
-                                        final Timestamp timestamp = doc['date'] as Timestamp;
-                                        final DateTime date = timestamp.toDate();
-                                        return ChartData(value, date);
-                                      }).toList();
-
-                                      // Use a set to keep track of unique dates
-                                      Set<DateTime> uniqueDates = Set<DateTime>();
-
-                                      // Aggregate data by day and collect unique dates
-                                      Map<DateTime, int> aggregatedData = {};
-                                      for (ChartData data in chartDataList) {
-                                        DateTime day =
-                                        DateTime(data.date.year, data.date.month, data.date.day);
-                                        if (!aggregatedData.containsKey(day)) {
-                                          aggregatedData[day] = data.value;
-                                          uniqueDates.add(day);
-                                        } else {
-                                          aggregatedData[day] = aggregatedData[day]! + data.value;
-                                        }
-                                      }
-
-                                      // Convert aggregated data to a list
-                                      List<ChartData> aggregatedChartDataList = uniqueDates
-                                          .map((date) => ChartData(aggregatedData[date]!, date))
-                                          .toList();
-
-                                      // Sort the aggregated data by date
-                                      aggregatedChartDataList.sort((a, b) => a.date.compareTo(b.date));
-
-                                      return Column(
-                                        children: [
-                                          // Line Chart
-                                          Expanded(
-                                            child: SfCartesianChart(
-                                              primaryXAxis: DateTimeAxis(
-                                                dateFormat:
-                                                DateFormat('dd MMM'), // Display only day and month
-                                                interval: 1, // Display every day
-                                              ),
-                                              series: <LineSeries<ChartData, DateTime>>[
-                                                LineSeries<ChartData, DateTime>(
-                                                  dataSource: aggregatedChartDataList,
-                                                  xValueMapper: (ChartData data, _) => data.date,
-                                                  yValueMapper: (ChartData data, _) => data.value,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          // List View
-                                          Expanded(
-                                            child: ListView.builder(
-                                              itemCount: snapshot.data!.docs.length,
-                                              itemBuilder: (BuildContext context, int index) {
-                                                final docData = snapshot.data?.docs[index];
-                                                final int value = (docData!['X'] as int);
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  const Text(
+                    'Statistieken Patient X',
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
+                  const SizedBox(height: 60),
                   Center(
                     child: FractionallySizedBox(
                       widthFactor: 0.8,
-                      child: Row(
-                        children: [
-                          // Hoek over tijd
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('max hoek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.left,),
-                                Container(
-                                  height: MediaQuery.of(context).size.width * 0.4,
-                                  child: StreamBuilder(
-                                    stream:
-                                    FirebaseFirestore.instance.collection('DummyData').snapshots(),
-                                    builder: (
-                                        BuildContext context,
-                                        AsyncSnapshot<QuerySnapshot> snapshot,
-                                        ) {
-                                      if (!snapshot.hasData) return const SizedBox.shrink();
-
-                                      // Extract data for the chart
-                                      List<ChartData> chartDataList = snapshot.data!.docs.map((doc) {
-                                        final int value = doc['X'] as int;
-                                        final Timestamp timestamp = doc['date'] as Timestamp;
-                                        final DateTime date = timestamp.toDate();
-                                        return ChartData(value, date);
-                                      }).toList();
-
-                                      // Use a set to keep track of unique dates
-                                      Set<DateTime> uniqueDates = Set<DateTime>();
-
-                                      // Aggregate data by day and collect unique dates
-                                      Map<DateTime, int> aggregatedData = {};
-                                      for (ChartData data in chartDataList) {
-                                        DateTime day =
-                                        DateTime(data.date.year, data.date.month, data.date.day);
-                                        if (!aggregatedData.containsKey(day)) {
-                                          aggregatedData[day] = data.value;
-                                          uniqueDates.add(day);
-                                        } else {
-                                          aggregatedData[day] = aggregatedData[day]! + data.value;
-                                        }
-                                      }
-
-                                      // Convert aggregated data to a list
-                                      List<ChartData> aggregatedChartDataList = uniqueDates
-                                          .map((date) => ChartData(aggregatedData[date]!, date))
-                                          .toList();
-
-                                      // Sort the aggregated data by date
-                                      aggregatedChartDataList.sort((a, b) => a.date.compareTo(b.date));
-
-                                      return Column(
-                                        children: [
-                                          // Line Chart
-                                          Expanded(
-                                            child: SfCartesianChart(
-                                              primaryXAxis: DateTimeAxis(
-                                                dateFormat:
-                                                DateFormat('dd MMM'), // Display only day and month
-                                                interval: 1, // Display every day
-                                              ),
-                                              series: <LineSeries<ChartData, DateTime>>[
-                                                LineSeries<ChartData, DateTime>(
-                                                  dataSource: aggregatedChartDataList,
-                                                  xValueMapper: (ChartData data, _) => data.date,
-                                                  yValueMapper: (ChartData data, _) => data.value,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          // List View
-                                          Expanded(
-                                            child: ListView.builder(
-                                              itemCount: snapshot.data!.docs.length,
-                                              itemBuilder: (BuildContext context, int index) {
-                                                final docData = snapshot.data?.docs[index];
-                                                final int value = (docData!['X'] as int);
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Hoek over tijd
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('max hoek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.left,),
-                                Container(
-                                  height: MediaQuery.of(context).size.width * 0.4,
-                                  child: StreamBuilder(
-                                    stream:
-                                    FirebaseFirestore.instance.collection('DummyData').snapshots(),
-                                    builder: (
-                                        BuildContext context,
-                                        AsyncSnapshot<QuerySnapshot> snapshot,
-                                        ) {
-                                      if (!snapshot.hasData) return const SizedBox.shrink();
-
-                                      // Extract data for the chart
-                                      List<ChartData> chartDataList = snapshot.data!.docs.map((doc) {
-                                        final int value = doc['X'] as int;
-                                        final Timestamp timestamp = doc['date'] as Timestamp;
-                                        final DateTime date = timestamp.toDate();
-                                        return ChartData(value, date);
-                                      }).toList();
-
-                                      // Use a set to keep track of unique dates
-                                      Set<DateTime> uniqueDates = Set<DateTime>();
-
-                                      // Aggregate data by day and collect unique dates
-                                      Map<DateTime, int> aggregatedData = {};
-                                      for (ChartData data in chartDataList) {
-                                        DateTime day =
-                                        DateTime(data.date.year, data.date.month, data.date.day);
-                                        if (!aggregatedData.containsKey(day)) {
-                                          aggregatedData[day] = data.value;
-                                          uniqueDates.add(day);
-                                        } else {
-                                          aggregatedData[day] = aggregatedData[day]! + data.value;
-                                        }
-                                      }
-
-                                      // Convert aggregated data to a list
-                                      List<ChartData> aggregatedChartDataList = uniqueDates
-                                          .map((date) => ChartData(aggregatedData[date]!, date))
-                                          .toList();
-
-                                      // Sort the aggregated data by date
-                                      aggregatedChartDataList.sort((a, b) => a.date.compareTo(b.date));
-
-                                      return Column(
-                                        children: [
-                                          // Line Chart
-                                          Expanded(
-                                            child: SfCartesianChart(
-                                              primaryXAxis: DateTimeAxis(
-                                                dateFormat:
-                                                DateFormat('dd MMM'), // Display only day and month
-                                                interval: 1, // Display every day
-                                              ),
-                                              series: <LineSeries<ChartData, DateTime>>[
-                                                LineSeries<ChartData, DateTime>(
-                                                  dataSource: aggregatedChartDataList,
-                                                  xValueMapper: (ChartData data, _) => data.date,
-                                                  yValueMapper: (ChartData data, _) => data.value,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          // List View
-                                          Expanded(
-                                            child: ListView.builder(
-                                              itemCount: snapshot.data!.docs.length,
-                                              itemBuilder: (BuildContext context, int index) {
-                                                final docData = snapshot.data?.docs[index];
-                                                final int value = (docData!['X'] as int);
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Hoek over tijd
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('max hoek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.left,),
-                                Container(
-                                  height: MediaQuery.of(context).size.width * 0.4,
-                                  child: StreamBuilder(
-                                    stream:
-                                    FirebaseFirestore.instance.collection('DummyData').snapshots(),
-                                    builder: (
-                                        BuildContext context,
-                                        AsyncSnapshot<QuerySnapshot> snapshot,
-                                        ) {
-                                      if (!snapshot.hasData) return const SizedBox.shrink();
-
-                                      // Extract data for the chart
-                                      List<ChartData> chartDataList = snapshot.data!.docs.map((doc) {
-                                        final int value = doc['X'] as int;
-                                        final Timestamp timestamp = doc['date'] as Timestamp;
-                                        final DateTime date = timestamp.toDate();
-                                        return ChartData(value, date);
-                                      }).toList();
-
-                                      // Use a set to keep track of unique dates
-                                      Set<DateTime> uniqueDates = Set<DateTime>();
-
-                                      // Aggregate data by day and collect unique dates
-                                      Map<DateTime, int> aggregatedData = {};
-                                      for (ChartData data in chartDataList) {
-                                        DateTime day =
-                                        DateTime(data.date.year, data.date.month, data.date.day);
-                                        if (!aggregatedData.containsKey(day)) {
-                                          aggregatedData[day] = data.value;
-                                          uniqueDates.add(day);
-                                        } else {
-                                          aggregatedData[day] = aggregatedData[day]! + data.value;
-                                        }
-                                      }
-
-                                      // Convert aggregated data to a list
-                                      List<ChartData> aggregatedChartDataList = uniqueDates
-                                          .map((date) => ChartData(aggregatedData[date]!, date))
-                                          .toList();
-
-                                      // Sort the aggregated data by date
-                                      aggregatedChartDataList.sort((a, b) => a.date.compareTo(b.date));
-
-                                      return Column(
-                                        children: [
-                                          // Line Chart
-                                          Expanded(
-                                            child: SfCartesianChart(
-                                              primaryXAxis: DateTimeAxis(
-                                                dateFormat:
-                                                DateFormat('dd MMM'), // Display only day and month
-                                                interval: 1, // Display every day
-                                              ),
-                                              series: <LineSeries<ChartData, DateTime>>[
-                                                LineSeries<ChartData, DateTime>(
-                                                  dataSource: aggregatedChartDataList,
-                                                  xValueMapper: (ChartData data, _) => data.date,
-                                                  yValueMapper: (ChartData data, _) => data.value,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          // List View
-                                          Expanded(
-                                            child: ListView.builder(
-                                              itemCount: snapshot.data!.docs.length,
-                                              itemBuilder: (BuildContext context, int index) {
-                                                final docData = snapshot.data?.docs[index];
-                                                final int value = (docData!['X'] as int);
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: TextSwitcher(),
                     ),
                   ),
                 ],
@@ -580,9 +48,152 @@ class WebPage extends StatelessWidget {
   }
 }
 
-class ChartData {
-  final int value;
-  final DateTime date;
+class TextSwitcher extends StatefulWidget {
+  @override
+  _TextSwitcherState createState() => _TextSwitcherState();
+}
 
-  ChartData(this.value, this.date);
+class _TextSwitcherState extends State<TextSwitcher> {
+  int _selectedTextIndex = 0;
+
+  static List<Widget> _textOptions = <Widget>[
+    Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black, width: 5),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      padding: EdgeInsets.all(50),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Maximum Hoek',
+            style: TextStyle(
+                fontSize: 24, fontWeight: FontWeight.bold, color: Colors.grey),
+          ),
+          SizedBox(height: 10),
+          Text(
+            '112.4°',
+            style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    ),
+    FractionallySizedBox(
+      widthFactor: 0.5,  // Width is 50% of the parent
+      child: ExerciseChart(),
+    ),
+  ];
+
+  void _selectText(int index) {
+    setState(() {
+      _selectedTextIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        _textOptions.elementAt(_selectedTextIndex),
+        SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () => _selectText(0),
+              child: Text('Max. Hoek'),
+            ),
+            SizedBox(width: 16),
+            ElevatedButton(
+              onPressed: () => _selectText(1),
+              child: Text('Oefening'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class ExerciseChart extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SfCartesianChart(
+      primaryXAxis: NumericAxis(
+        title: AxisTitle(text: 'cycli'),
+        minimum: 1,
+      ),
+      primaryYAxis: NumericAxis(
+        title: AxisTitle(text: 'Hoek (°)'),
+        minimum: 70,
+        maximum: 110,
+      ),
+      series: <LineSeries<ExerciseData, double>>[
+        LineSeries<ExerciseData, double>(
+          dataSource: getExerciseData(),
+          xValueMapper: (ExerciseData data, _) => data.time,
+          yValueMapper: (ExerciseData data, _) => data.value,
+        )
+      ],
+    );
+  }
+
+  List<ExerciseData> getExerciseData() {
+    return [
+      ExerciseData(1, 70),
+      ExerciseData(2, 75),
+      ExerciseData(3, 72),
+      ExerciseData(4, 78),
+      ExerciseData(5, 83),
+      ExerciseData(6, 79),
+      ExerciseData(7, 86),
+      ExerciseData(8, 89),
+      ExerciseData(9, 95),
+      ExerciseData(10, 100),
+    ];
+  }
+}
+
+class ExerciseData {
+  ExerciseData(this.time, this.value);
+  final double time;
+  final double value;
+}
+
+void getUserSensorData() async {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  DocumentSnapshot userDocument = await firestore
+      .collection('sd-dummy-users')
+      .doc('GXNDW2WtvpSqt1Ly5KQyoy8dAzH2')
+      .get();
+
+  if (userDocument.exists) {
+    QuerySnapshot sensorsSnapshot = await firestore
+        .collection('sd-dummy-users')
+        .doc('GXNDW2WtvpSqt1Ly5KQyoy8dAzH2')
+        .collection('sensors')
+        .get();
+
+    for (var sensorDoc in sensorsSnapshot.docs) {
+      if (sensorDoc.id == 'D4:22:CD:00:92:2E') {
+        QuerySnapshot sessionSnapshot = await firestore
+            .collection('sd-dummy-users')
+            .doc('GXNDW2WtvpSqt1Ly5KQyoy8dAzH2')
+            .collection('sensors')
+            .doc(sensorDoc.id)
+            .collection('session1')
+            .orderBy("sessionTime")
+            .get();
+
+        sessionSnapshot.docs.forEach((doc) {
+          print('Session data: ${doc.data()}');
+        });
+      }
+    }
+  } else {
+    print('No user found with name Seppe');
+  }
 }
