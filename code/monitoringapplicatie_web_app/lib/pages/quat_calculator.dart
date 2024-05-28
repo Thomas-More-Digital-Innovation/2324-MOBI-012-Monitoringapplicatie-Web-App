@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:vector_math/vector_math.dart';
 
-void qautToAngle(List<double> quaternion1, List<double>quaternion2) {
+double qautToAngle(List<dynamic> quaternion1, List<dynamic> quaternion2) {
 
   // defining the different values of the quaternions separate
   // naming q[quaternion num.][which value]
@@ -49,6 +49,6 @@ void qautToAngle(List<double> quaternion1, List<double>quaternion2) {
   double radAngle = acos((trace - 1) / 2);
   double angle = degrees(radAngle);
 
-  print(angle);
+  return angle;
 
 }
